@@ -1,0 +1,19 @@
+{
+  "name": "simple-notes",
+  "version": "1.0.0",
+  "description": "simple notes app pern stack",
+  "main": "index.js",
+  "scripts": {
+    "start": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zazu7765/simple-notes.git"
+  },
+  "author": "zazu7765",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zazu7765/simple-notes/issues"
+  },
+  "homepage": "https://github.com/zazu7765/simple-notes#readme"
+}
