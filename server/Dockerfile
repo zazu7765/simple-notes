@@ -6,7 +6,7 @@ RUN npm ci && npm install typescript -g
 COPY . .
 RUN npm run build
 
-FROM node:16.17.0-bullseye-slim
+FROM node:16
 WORKDIR /usr/src/server
 COPY package*.json ./
 RUN npm ci
