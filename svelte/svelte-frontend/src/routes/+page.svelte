@@ -24,6 +24,7 @@
   <header>
      <nav
         class="
+        fixed-top
           flex flex-wrap
           items-center
           justify-between
@@ -91,7 +92,7 @@
          <svg on:click={() => {if (menu === "hidden"){menu = "visible"}else{menu = "hidden"}}}
             xmlns="http://www.w3.org/2000/svg"
             id="menu-button"
-            class="h-6 w-6 cursor-pointer md:visible block"
+            class="h-6 w-6 cursor-pointer md:hidden block"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
