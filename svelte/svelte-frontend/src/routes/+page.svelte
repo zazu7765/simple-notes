@@ -1,4 +1,16 @@
+<script lang="ts">
+  // import { onMount } from "svelte";
+  
+  // onMount(() => {
+    
+  //    return document.querySelector('#menu')
+    
+  // });
+  let menu = "hidden";
+  
+  
 
+  </script>
 <div>
   <body
     class="
@@ -75,10 +87,11 @@
           </a>
         </div>
        
-         <svg 
+         <!-- svelte-ignore a11y-click-events-have-key-events -->
+         <svg on:click={() => {if (menu === "hidden"){menu = "visible"}else{menu = "hidden"}}}
             xmlns="http://www.w3.org/2000/svg"
             id="menu-button"
-            class="h-6 w-6 cursor-pointer md:hidden block"
+            class="h-6 w-6 cursor-pointer md:visible block"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -91,7 +104,7 @@
             />
           </svg>
        
-       <div class="hidden w-full md:flex md:items-center md:w-auto" id="menu">
+       <div class="{menu} w-full md:flex md:items-center md:w-auto" id="menu">
           <ul
             class="
               pt-4
