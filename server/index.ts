@@ -1,11 +1,13 @@
 'use strict';
 import { Express } from "express";
+
 const express = require('express');
 var cors = require('cors');
 
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
+
 
 // App
 const app:Express = express();

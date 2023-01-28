@@ -8,8 +8,9 @@ RUN npm run build
 
 FROM node:16
 WORKDIR /usr/src/server
+ENV NODE_ENV production
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --only=production
 COPY --from=builder /usr/src/server/dist ./dist
 EXPOSE 8080
 CMD ["node", "dist/index.js"]
