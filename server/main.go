@@ -21,7 +21,7 @@ type loginRequest struct {
 
 func main() {
 	config := Config{
-		host:     "localhost",
+		host:     "simple-notes-db-1",
 		port:     "5432",
 		password: "postgres",
 		user:     "postgres",
