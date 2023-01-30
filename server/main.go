@@ -13,6 +13,10 @@ type signupRequest struct {
 	Email    string
 	Password string
 }
+type loginRequest struct {
+	Email    string
+	Password string
+}
 
 func main() {
 	config := Config{
@@ -41,7 +45,7 @@ func main() {
 			return err
 		}
 		if req.Name == "" || req.Email == "" || req.Password == "" {
-			return fiber.NewError(fiber.StatusBadRequest, "bad credentials")
+			return fiber.NewError(fiber.StatusBadRequest, "bad signup credentials")
 		}
 		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
@@ -63,14 +67,23 @@ func main() {
 			"token": token, "expiration": exp, "user": user})
 	})
 	app.Post("/login", func(c *fiber.Ctx) error {
-		req := new(signupRequest)
+		req := new(loginRequest)
 		if err := c.BodyParser(req); err != nil {
 			return err
 		}
-		if req.Name == "" || req.Email == "" || req.Password == "" {
-			return fiber.NewError(fiber.StatusBadRequest, "bad credentials")
+		if req.Email == "" || req.Password == "" {
+			return fiber.NewError(fiber.StatusBadRequest, "bad login credentials")
 		}
-		return nil
+		var user User
+		if db.Where("email = ?", req.Email).Order("id").Find(&user).Error != nil {
+			return fiber.NewError(fiber.StatusBadRequest, "user does not exist or bad login credentials")
+		}
+		token, exp, err := generateJWT(user)
+		if err != nil {
+			return err
+		}
+		return c.JSON(fiber.Map{
+			"token": token, "expiration": exp, "user": user})
 	})
 	app.Get("/private", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
