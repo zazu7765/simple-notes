@@ -1,16 +1,9 @@
 # build SERVER
-FROM node:16 AS builder
-WORKDIR /usr/src/server
-COPY package*.json ./
-RUN npm ci && npm install typescript -g
-COPY . .
-RUN npm run build
-
-FROM node:16
-WORKDIR /usr/src/server
-ENV NODE_ENV production
-COPY package*.json ./
-RUN npm ci --only=production
-COPY --from=builder /usr/src/server/dist ./dist
+FROM golang:1.19-alpine
+WORKDIR /server
+COPY go.* ./
+RUN go mod download
+COPY *.go ./
+RUN go build -o /notes-server
 EXPOSE 8080
-CMD ["node", "dist/index.js"]
+CMD ["/notes-server"]
