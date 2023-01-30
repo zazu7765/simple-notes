@@ -12,6 +12,8 @@ services:
     ports:
     - "5432:5432"
   server:
+    depends_on:
+      - db
     build:
       context: ./server
       dockerfile: Dockerfile

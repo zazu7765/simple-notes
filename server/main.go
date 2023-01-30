@@ -93,12 +93,27 @@ func main() {
 	})
 	private := app.Group("/private")
 	private.Use(jwtware.New(jwtware.Config{
-		SigningKey: []byte("secret"),
+		SigningKey: []byte("bananas"),
 	}))
 	private.Get("/", func(c *fiber.Ctx) error {
+		var retrievedUser User
+		user := c.Locals("user").(*jwt.Token)
+		claims := user.Claims.(jwt.MapClaims)
+		if time.Now().Unix() > int64(claims["expiration"].(float64)) {
+			return c.JSON(fiber.Map{
+				"success": false,
+				"path":    "private",
+				"error":   "token"})
+		}
+		userID := claims["user_id"].(float64)
+		if db.Where("id = ?", userID).Find(&retrievedUser).Error != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
 		return c.JSON(fiber.Map{
 			"success": true,
-			"path":    "private"})
+			"path":    "private",
+			"name":    retrievedUser.Name,
+			"email":   retrievedUser.Email})
 	})
 	public := app.Group("/public")
 	public.Get("/", func(c *fiber.Ctx) error {
@@ -144,12 +159,12 @@ func main() {
 }
 
 func generateJWT(user User) (string, int64, error) {
-	exp := time.Now().Add(time.Minute * 30).Unix()
+	exp := time.Now().Add(time.Minute * 5).Unix()
 	JWTToken := jwt.New(jwt.SigningMethodHS256)
 	claim := JWTToken.Claims.(jwt.MapClaims)
 	claim["user_id"] = user.ID
 	claim["expiration"] = exp
-	t, err := JWTToken.SignedString([]byte("secret"))
+	t, err := JWTToken.SignedString([]byte("bananas"))
 	if err != nil {
 		return "", 0, err
 	}
