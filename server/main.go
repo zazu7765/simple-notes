@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -55,7 +56,9 @@ func main() {
 		user := User{
 			Name:     req.Name,
 			Email:    req.Email,
-			Password: string(hash)}
+			Password: string(hash),
+			Notebook: Notebook{
+				Title: "Untitled"}}
 
 		db.Create(&user)
 
@@ -78,6 +81,9 @@ func main() {
 		if db.Where("email = ?", req.Email).Order("id").Find(&user).Error != nil {
 			return fiber.NewError(fiber.StatusBadRequest, "user does not exist or bad login credentials")
 		}
+		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+			return err
+		}
 		token, exp, err := generateJWT(user)
 		if err != nil {
 			return err
@@ -85,12 +91,17 @@ func main() {
 		return c.JSON(fiber.Map{
 			"token": token, "expiration": exp, "user": user})
 	})
-	app.Get("/private", func(c *fiber.Ctx) error {
+	private := app.Group("/private")
+	private.Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte("secret"),
+	}))
+	private.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"success": true,
 			"path":    "private"})
 	})
-	app.Get("/public", func(c *fiber.Ctx) error {
+	public := app.Group("/public")
+	public.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"success": true,
 			"path":    "public"})

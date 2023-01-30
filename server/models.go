@@ -14,14 +14,14 @@ type User struct {
 type Notebook struct {
 	gorm.Model
 	UserID uint
-	Title  string
+	Title  string `gorm:"default:Untitled Notebook"`
 	Notes  []Note
 }
 type Note struct {
 	gorm.Model
 	NotebookID uint
-	Title      string
-	Content    string
+	Title      string `gorm:"default:Untitled Note"`
+	Content    string `gorm:"default:Lorem Ipsum Dolor Sit Amet"`
 }
 
 func migrateAll(db *gorm.DB) error {
