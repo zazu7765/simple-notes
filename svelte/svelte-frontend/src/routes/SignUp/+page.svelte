@@ -1,9 +1,15 @@
 
 <script lang="ts">
+    import NavBar from "../../lib/NavBar.svelte"
     export let data:any;
     console.log(data);
-    
+
 </script>
+
+
+  <div>
+    <NavBar/>
+  </div>
 
 <!--
   This example requires some changes to your config:
