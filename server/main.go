@@ -3,7 +3,16 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
+	"golang.org/x/crypto/bcrypt"
+	"time"
 )
+
+type signupRequest struct {
+	Name     string
+	Email    string
+	Password string
+}
 
 func main() {
 	config := Config{
@@ -27,9 +36,40 @@ func main() {
 		return c.SendString("server is up!")
 	})
 	app.Post("/signup", func(c *fiber.Ctx) error {
-		return nil
+		req := new(signupRequest)
+		if err := c.BodyParser(req); err != nil {
+			return err
+		}
+		if req.Name == "" || req.Email == "" || req.Password == "" {
+			return fiber.NewError(fiber.StatusBadRequest, "bad credentials")
+		}
+		hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return err
+		}
+
+		user := User{
+			Name:     req.Name,
+			Email:    req.Email,
+			Password: string(hash)}
+
+		db.Create(&user)
+
+		token, exp, err := generateJWT(user)
+		if err != nil {
+			return err
+		}
+		return c.JSON(fiber.Map{
+			"token": token, "expiration": exp, "user": user})
 	})
 	app.Post("/login", func(c *fiber.Ctx) error {
+		req := new(signupRequest)
+		if err := c.BodyParser(req); err != nil {
+			return err
+		}
+		if req.Name == "" || req.Email == "" || req.Password == "" {
+			return fiber.NewError(fiber.StatusBadRequest, "bad credentials")
+		}
 		return nil
 	})
 	app.Get("/private", func(c *fiber.Ctx) error {
@@ -77,4 +117,17 @@ func main() {
 		fmt.Println("---------")
 	}
 	*/
+}
+
+func generateJWT(user User) (string, int64, error) {
+	exp := time.Now().Add(time.Minute * 30).Unix()
+	JWTToken := jwt.New(jwt.SigningMethodHS256)
+	claim := JWTToken.Claims.(jwt.MapClaims)
+	claim["user_id"] = user.ID
+	claim["expiration"] = exp
+	t, err := JWTToken.SignedString([]byte("secret"))
+	if err != nil {
+		return "", 0, err
+	}
+	return t, exp, nil
 }

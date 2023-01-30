@@ -8,7 +8,7 @@ type User struct {
 	gorm.Model
 	Name     string
 	Email    string
-	Password string
+	Password string `json:"-"`
 	Notebook Notebook
 }
 type Notebook struct {
