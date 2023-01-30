@@ -4,10 +4,13 @@
       import { Editor } from '@tiptap/core';
       import StarterKit from '@tiptap/starter-kit';
       
+      
       // @todo this throws a 'process is not defined' error in the Svelte REPL.
       // Uncomment the next line to see the REPL issue.
       // import BubbleMenu from '@tiptap/extension-bubble-menu'
       import FixedMenu from './FixedMenu.svelte';
+      import {browser} from '$app/environment';
+      
       
       export let content = '';
       
@@ -21,7 +24,11 @@
       editor = new Editor({
         element,
               extensions: [StarterKit],
-            
+              editorProps: {
+    attributes: {
+      class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
+    },
+  },
               onTransaction: () => {
           editor = editor;
               },
@@ -32,10 +39,11 @@
           });
       });
   
-      onDestroy(() => {
-      editor.destroy();
-      });
-      const parser = new DOMParser();
+      let parser:any;
+      onMount(() => {
+     
+      parser = new DOMParser();
+    });
 
   </script>
   
@@ -45,11 +53,11 @@
       <div class="element-wrapper" bind:this={element}/>
   </div>
   
-  {#if editor}
+  {#if editor&&browser}
 
   
   <div >
-      {parser.parseFromString(editor.getHTML(), 'text/html').body.firstChild?.textContent}
+      {parser.parseFromString(editor.getHTML(), 'text/html').body.firstChild?.textContent }
   </div>
 
   

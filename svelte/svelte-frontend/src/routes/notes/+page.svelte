@@ -6,9 +6,13 @@
 
 
   </script>
+  <div>
+    <NavBar/>
+    
+  </div>
   
 <div>
-  <NavBar/>
-    <Tiptap/>
+  <Tiptap/>
+    
     
 </div>
