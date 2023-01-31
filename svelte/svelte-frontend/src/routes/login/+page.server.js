@@ -1,14 +1,14 @@
 import { redirect } from '@sveltejs/kit';
-import * as jwt from 'jsonwebtoken';
+
 
 
 export function load({ locals }) {
-	if (!locals.user) throw redirect(302, '/');
+	if (locals.user) throw redirect(302, '/notes');
 }
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-    default: async ({cookies,request,locals}) => {
+    default: async ({cookies,request}) => {
       const data = await request.formData();
       const email = data.get('email');
       const password = data.get('password');
@@ -37,7 +37,7 @@ export const actions = {
     //   let parsed = JSON.parse(total);
     //   console.log(dataPost['token']);
 
-
+      
 
         cookies.set('jwt', dataPost,{path: '/',
     maxAge: dataPost['expiration']} )
@@ -46,7 +46,7 @@ export const actions = {
     //     data: dataPost,
         
     //   }
-      
+    throw redirect(301, '/notes');
       
     
       

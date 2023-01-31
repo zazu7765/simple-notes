@@ -1,11 +1,12 @@
-<script>
+<script lang="ts">
 
   import NavBar from "../lib/NavBar.svelte"
-  
+  export let data:any;
+  let login = data.bool;
 </script>
 
   <div>
-    <NavBar/>
+    <NavBar {login}/>
   </div>
   <div class="px-4">
       <div

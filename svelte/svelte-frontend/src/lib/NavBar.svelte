@@ -1,13 +1,17 @@
 <script lang="ts">
+
+
+  
     // import { onMount } from "svelte";
     
     // onMount(() => {
       
     //    return document.querySelector('#menu')
-      
-    // });
     let menu = "hidden";
-    
+    export let login:boolean;
+    // });
+    console.log(login);
+
     
   
     </script>
@@ -130,18 +134,37 @@
                   >Customers</a
                 >
               </li>
+
+              {#if !login}
+                
+             
               <li>
-                <a class="md:p-4 py-2 block hover:text-purple-400" href="#"
-                  >Blog</a
+                <a class="md:p-4 py-2 block hover:text-purple-400" href="/login"
+                  >login</a
                 >
               </li>
               <li>
                 <a
                   class="md:p-4 py-2 block hover:text-purple-400 text-purple-500"
-                  href="/SignUp"
+                  href="/sign"
                   >Sign Up</a
                 >
+               
               </li>
+              
+              {:else}
+
+              <li>
+              <a
+
+              class="md:p-4 py-2 block hover:text-purple-400 text-purple-500"
+              href="/logout"
+              >Logout</a
+            >
+          </li>
+
+        {/if}
+
             </ul>
           </div>
       </nav>
