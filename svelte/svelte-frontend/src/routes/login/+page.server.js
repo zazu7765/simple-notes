@@ -41,6 +41,7 @@ export const actions = {
 
         cookies.set('jwt', dataPost,{path: '/',
     maxAge: dataPost['expiration']} )
+
     //   return{
     //     success: true,
     //     data: dataPost,

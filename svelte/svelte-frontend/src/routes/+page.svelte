@@ -1,13 +1,61 @@
 <script lang="ts">
+// 	import { onMount } from "svelte";
+//   onMount(() => {
+//     document.requestStorageAccess().then(
+//   () => { console.log('access granted') },
+//   () => { console.log('access denied') }
+// );     
+
+//    });
 
   import NavBar from "../lib/NavBar.svelte"
+  
   export let data:any;
   let login = data.bool;
+
+  import { onMount } from "svelte";
+		import { Editor, rootCtx, defaultValueCtx } from "@milkdown/core";
+		import { commonmark } from "@milkdown/preset-commonmark";
+		import { nord } from "@milkdown/theme-nord";
+
+
+		export let defaultValue;
+
+		function editor(dom) {
+      onMount(async () => {
+		  Editor.make()
+		    .config(ctx => {
+		      ctx.set(rootCtx, dom);
+		      ctx.set(defaultValueCtx, defaultValue);
+		    })
+		    .use(nord)
+
+		    .use(commonmark)
+       
+		    .create();
+        
+        )};catch(error){
+  
+  console.log(error)
+    }
+		}
+
+  
+    
+
 </script>
 
+
   <div>
+
     <NavBar {login}/>
+
   </div>
+  <style>
+  </style>
+  
+  <div use:editor />
+
   <div class="px-4">
       <div
         class="
