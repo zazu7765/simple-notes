@@ -9,7 +9,7 @@
 
     let num = 5;
     console.log(data)
-
+    let content = data['response']['note']['Title'];
 
   </script>
   <div>
@@ -20,7 +20,7 @@
     
 
       {#each Array(5) as _, index (index)}
-      <Notebook/>
+      <Notebook {content}/>
       {/each}
 
 </div>
