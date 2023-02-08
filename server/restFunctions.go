@@ -55,6 +55,15 @@ func signUpUser(c *fiber.Ctx) error {
 					{
 						Title: "My First Note",
 					},
+					{
+						Title: "My Journal",
+					},
+					{
+						Title: "My Grocery List",
+					},
+					{
+						Title: "My To-Do List",
+					},
 				},
 			},
 		}}
