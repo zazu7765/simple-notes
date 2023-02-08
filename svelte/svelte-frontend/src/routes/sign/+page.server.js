@@ -14,7 +14,7 @@ export const actions = {
 		const name = data.get('name');
 		const email = data.get('email');
 		const password = data.get('password');
-		const response = await fetch('http://localhost:81/signup', {
+		const response = await fetch('http://localhost:81/session/create', {
         method: 'POST',
         body: JSON.stringify({"Name": name,"Email": email, "Password": password}),
         headers: {

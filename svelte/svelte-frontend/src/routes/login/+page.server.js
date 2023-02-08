@@ -12,7 +12,7 @@ export const actions = {
       const data = await request.formData();
       const email = data.get('email');
       const password = data.get('password');
-      const response = await fetch('http://localhost:81/login', {
+      const response = await fetch('http://localhost:81/session/login', {
         method: 'POST',
         body: JSON.stringify({"Email": email, "Password": password}),
         headers: {
@@ -39,7 +39,7 @@ export const actions = {
 
       
 
-        cookies.set('jwt', dataPost,{path: '/',
+        cookies.set('jwt', dataPost['token'],{path: '/',
     maxAge: dataPost['expiration']} )
 
     //   return{

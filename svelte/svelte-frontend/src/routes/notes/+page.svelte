@@ -5,9 +5,10 @@
     import NavBar from '../../lib/NavBar.svelte';
     import Notebook from '../../lib/notes.svelte'
     export let data:any;
-    let login = data;
+    let login = data.bool;
 
     let num = 5;
+    console.log(data)
 
 
   </script>
