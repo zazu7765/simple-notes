@@ -4,6 +4,6 @@ module.exports = {
   theme: {
     extend: { backgroundColor: ['active'],},
   },
-  plugins: [],
-  
+  plugins: [require('flowbite/plugin')],
+  darkMode: 'class',
 }

@@ -14,31 +14,31 @@
   let login = data.bool;
 
   import { onMount } from "svelte";
-		import { Editor, rootCtx, defaultValueCtx } from "@milkdown/core";
+		import { Editor, rootCtx, defaultValueCtx, editorViewOptionsCtx } from "@milkdown/core";
 		import { commonmark } from "@milkdown/preset-commonmark";
 		import { nord } from "@milkdown/theme-nord";
 
 
-		export let defaultValue;
+		export let defaultValue = 'Type pls 😘';
 
 		function editor(dom) {
       onMount(async () => {
-		  Editor.make()
+		  return await Editor.make()
 		    .config(ctx => {
-		      ctx.set(rootCtx, dom);
-		      ctx.set(defaultValueCtx, defaultValue);
+
+          ctx.update(editorViewOptionsCtx, (prev) => ({
+      ...prev,
+      attributes: { class: 'milkdown-editor mx-auto outline-none margin-top-0 flex justify-center rounded-lg', spellcheck: 'false' },
+    }))
 		    })
 		    .use(nord)
 
 		    .use(commonmark)
        
-		    .create();
-        
-        )};catch(error){
-  
-  console.log(error)
-    }
-		}
+		    .create()
+    
+      }) };
+		
 
   
     
@@ -46,14 +46,12 @@
 </script>
 
 
-  <div>
+  <div >
 
     <NavBar {login}/>
 
   </div>
-  <style>
-  </style>
-  
+
   <div use:editor />
 
   <div class="px-4">
