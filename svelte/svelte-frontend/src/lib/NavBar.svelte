@@ -26,6 +26,7 @@
     <header>
        <nav
           class="
+
           fixed-top
             flex flex-wrap
             items-center
@@ -36,9 +37,10 @@
             px-4
             text-lg text-gray-700
             bg-white
+
           "
         >
-         <div>
+         <div >
             <a href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
