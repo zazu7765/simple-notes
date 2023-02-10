@@ -71,7 +71,11 @@ func getDefault(c *fiber.Ctx) error {
 func signUpUser(c *fiber.Ctx) error {
 	req := new(signupRequest)
 	if err := c.BodyParser(req); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
 	}
 	if err := validateSignUp(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
