@@ -1,9 +1,10 @@
 
 
 <script lang='ts'>
-    import Tiptap from '../../lib/TipTap/tiptapApp.svelte';
-    import NavBar from '../../lib/NavBar.svelte';
-    import Notebook from '../../lib/notes.svelte'
+  
+
+    import NavBar from '../../../lib/NavBar.svelte';
+    import Notebook from '../../../lib/notes.svelte'
     export let data:any;
     let login = data.bool;
 
@@ -24,8 +25,4 @@
       {/each}
 
 </div>
-<!-- <div>
-  <Tiptap/>
-    
-    
-</div> -->
+

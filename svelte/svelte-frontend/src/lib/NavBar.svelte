@@ -1,5 +1,7 @@
 <script lang="ts">
 
+import { get } from 'svelte/store';
+
 
   
     // import { onMount } from "svelte";
@@ -9,6 +11,7 @@
     //    return document.querySelector('#menu')
     let menu = "hidden";
     export let login:boolean;
+
     // });
     console.log(login);
 
@@ -154,8 +157,14 @@
               {:else}
 
               <li>
+                <a
+                
+                class="md:p-4 py-2 block hover:text-purple-400 text-purple-500"
+                href="/logout"
+                >Welcome !</a
+              >
               <a
-
+                
               class="md:p-4 py-2 block hover:text-purple-400 text-purple-500"
               href="/logout"
               >Logout</a
