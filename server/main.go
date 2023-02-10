@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	jwtware "github.com/gofiber/jwt/v3"
 	"github.com/golang-jwt/jwt/v4"
@@ -28,7 +29,8 @@ var (
 		}
 		return db
 	}()
-	app = fiber.New()
+	app      = fiber.New()
+	validate = validator.New()
 )
 
 func main() {
@@ -48,20 +50,23 @@ func main() {
 	//user.Put("/")
 	//user.Delete("/")
 
-	notebooks := app.Group("/notebook")
+	notebooks := app.Group("/notebooks")
 	notebooks.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("bananas"),
 	}))
-	//notebooks.Get("/")
+	notebooks.Get("/notebook/:id", getNotebook)
+	notebooks.Get("/all", getAllNotebooks)
 	//notebooks.Post("/")
 	//notebooks.Put("")
 	//notebooks.Delete("/")
 
-	notes := app.Group("/note")
+	notes := app.Group("/notes")
 	notes.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("bananas"),
 	}))
-	notes.Get("/", getNote)
+	notes.Get("/note/:id", getNote)
+	notes.Get("/all", getAllNotes)
+
 	//notes.Post("/")
 	//notes.Put("/")
 	//notes.Delete("/")

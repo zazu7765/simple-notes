@@ -6,20 +6,20 @@ import (
 
 type User struct {
 	gorm.Model
-	Name     string
-	Email    string
-	Password string `json:"-"`
+	Name     string `gorm:"not null"`
+	Email    string `gorm:"unique;not null"`
+	Password string `gorm:"not null" json:"-"`
 	Notebook []Notebook
 }
 type Notebook struct {
 	gorm.Model
-	UserID uint
+	UserID uint   `gorm:"not null"`
 	Title  string `gorm:"default:Untitled Notebook"`
 	Notes  []Note
 }
 type Note struct {
 	gorm.Model
-	NotebookID uint
+	NotebookID uint   `gorm:"not null"`
 	Title      string `gorm:"default:Untitled Note"`
 	Content    string `gorm:"default:Lorem Ipsum Dolor Sit Amet"`
 }
