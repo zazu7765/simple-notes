@@ -1,5 +1,7 @@
 <script lang="ts">
 
+import { get } from 'svelte/store';
+
 
   
     // import { onMount } from "svelte";
@@ -9,6 +11,7 @@
     //    return document.querySelector('#menu')
     let menu = "hidden";
     export let login:boolean;
+
     // });
     console.log(login);
 
@@ -26,6 +29,7 @@
     <header>
        <nav
           class="
+
           fixed-top
             flex flex-wrap
             items-center
@@ -36,9 +40,10 @@
             px-4
             text-lg text-gray-700
             bg-white
+
           "
         >
-         <div>
+         <div >
             <a href="#">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -152,8 +157,14 @@
               {:else}
 
               <li>
+                <a
+                
+                class="md:p-4 py-2 block hover:text-purple-400 text-purple-500"
+                href="/logout"
+                >Welcome !</a
+              >
               <a
-
+                
               class="md:p-4 py-2 block hover:text-purple-400 text-purple-500"
               href="/logout"
               >Logout</a

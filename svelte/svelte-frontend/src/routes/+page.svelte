@@ -13,31 +13,10 @@
   export let data:any;
   let login = data.bool;
 
-  import { onMount } from "svelte";
-		import { Editor, rootCtx, defaultValueCtx, editorViewOptionsCtx } from "@milkdown/core";
-		import { commonmark } from "@milkdown/preset-commonmark";
-		import { nord } from "@milkdown/theme-nord";
 
 
-		export let defaultValue = 'Type pls 😘';
 
-		function editor(dom) {
-      onMount(async () => {
-		  return await Editor.make()
-		    .config(ctx => {
-
-          ctx.update(editorViewOptionsCtx, (prev) => ({
-      ...prev,
-      attributes: { class: 'milkdown-editor mx-auto outline-none margin-top-0 flex justify-center rounded-lg', spellcheck: 'false' },
-    }))
-		    })
-		    .use(nord)
-
-		    .use(commonmark)
-       
-		    .create()
-    
-      }) };
+	
 		
 
   
@@ -52,7 +31,7 @@
 
   </div>
 
-  <div use:editor />
+
 
   <div class="px-4">
       <div

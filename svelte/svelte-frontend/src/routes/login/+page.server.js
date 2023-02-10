@@ -47,7 +47,7 @@ export const actions = {
     //     data: dataPost,
         
     //   }
-    throw redirect(301, '/notes');
+    throw redirect(301, '/user');
       
     
       

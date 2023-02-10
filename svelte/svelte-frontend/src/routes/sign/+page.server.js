@@ -42,6 +42,6 @@ export const actions = {
 	
 			cookies.set('jwt', dataPost['token'],{path: '/',
 		maxAge: dataPost['expiration']} )
-		throw redirect (302, '/notes')
+		throw redirect (302, '/user')
 	}
 };
