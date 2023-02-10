@@ -12,13 +12,13 @@ import (
 )
 
 type signupRequest struct {
-	Name     string `validate:"required"`
-	Email    string `validate:"required,email"`
-	Password string `validate:"required"`
+	Name     string //`validate:"required"`
+	Email    string //`validate:"required,email"`
+	Password string //`validate:"required"`
 }
 type loginRequest struct {
-	Email    string `validate:"required,email"`
-	Password string `validate:"required"`
+	Email    string //`validate:"required,email"`
+	Password string //`validate:"required"`
 }
 type loginResponse struct {
 	WebToken   string
@@ -73,7 +73,7 @@ func signUpUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
-			"Message": "JSON Validation Failed",
+			"Message": "JSON Parsing Failed",
 			"Data":    err,
 		})
 	}
