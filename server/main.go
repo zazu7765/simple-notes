@@ -47,7 +47,7 @@ func main() {
 		SigningKey: []byte("bananas"),
 	}))
 	user.Get("/", getUser)
-	//user.Put("/")
+	user.Put("/", updateUser)
 	//user.Delete("/")
 
 	notebooks := app.Group("/notebooks")

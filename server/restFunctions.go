@@ -11,14 +11,15 @@ import (
 	"time"
 )
 
+// REQUEST/RESPONSE STRUCTS
 type signupRequest struct {
-	Name     string //`validate:"required"`
-	Email    string //`validate:"required,email"`
-	Password string //`validate:"required"`
+	Name     string `json:"name" ,validate:"required"`
+	Email    string `json:"email" ,validate:"required"`
+	Password string `json:"password" ,validate:"required"`
 }
 type loginRequest struct {
-	Email    string //`validate:"required,email"`
-	Password string //`validate:"required"`
+	Email    string `json:"email" ,validate:"required"`
+	Password string `json:"password" ,validate:"required"`
 }
 type loginResponse struct {
 	WebToken   string
@@ -30,6 +31,7 @@ type userResponse struct {
 	Email string
 }
 
+// AUTH FUNCTIONS
 func checkToken(user *jwt.Token) (uint, error) {
 	claims := user.Claims.(jwt.MapClaims)
 	userID := uint(claims["user_id"].(float64))
@@ -61,6 +63,7 @@ func validateSignUp(request *signupRequest) []*validator.FieldError {
 	return fieldErrors
 }
 
+// GENERAL FUNCTIONS
 func getDefault(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"Status":  "success",
@@ -68,6 +71,8 @@ func getDefault(c *fiber.Ctx) error {
 		"Data":    nil,
 	})
 }
+
+// USER FUNCTIONS
 func signUpUser(c *fiber.Ctx) error {
 	req := new(signupRequest)
 	if err := c.BodyParser(req); err != nil {
@@ -201,7 +206,6 @@ func loginUser(c *fiber.Ctx) error {
 			user.Name},
 	})
 }
-
 func getUser(c *fiber.Ctx) error {
 	var retrievedUser User
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
@@ -235,6 +239,71 @@ func getUser(c *fiber.Ctx) error {
 		},
 	})
 }
+func updateUser(c *fiber.Ctx) error {
+	var retrievedUser User
+	req := new(signupRequest)
+	if err := validateSignUp(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Password hashing failed",
+			"Data":    err,
+		})
+	}
+	if db.Where("id = ?", userID).First(&retrievedUser).Error != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"Status":  "error",
+				"Message": "Database Error",
+				"Data":    "User not Found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Database Error",
+			"Data":    err,
+		})
+	}
+	retrievedUser.Name = req.Name
+	retrievedUser.Email = req.Email
+	retrievedUser.Password = string(hash)
+	if err := db.Save(&retrievedUser).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Unable to update user",
+			"Data":    err,
+		})
+	}
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "User updated",
+		"Data":    nil,
+	})
+}
+
+// NOTES FUNCTIONS
 func getNote(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
 	note := Note{Model: gorm.Model{ID: uint(id)}}
@@ -259,13 +328,12 @@ func getNote(c *fiber.Ctx) error {
 			"Message": "Note not Found",
 			"Data":    err,
 		})
-	} else {
-		return c.JSON(fiber.Map{
-			"Status":  "success",
-			"Message": "Note found",
-			"Data":    note,
-		})
 	}
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "Note found",
+		"Data":    note,
+	})
 
 }
 func getAllNotes(c *fiber.Ctx) error {
@@ -295,6 +363,8 @@ func getAllNotes(c *fiber.Ctx) error {
 		"Data":    notes,
 	})
 }
+
+// NOTEBOOK FUNCTIONS
 func getNotebook(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
