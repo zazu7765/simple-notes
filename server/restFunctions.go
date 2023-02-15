@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"strconv"
 	"time"
 )
@@ -300,6 +301,53 @@ func updateUser(c *fiber.Ctx) error {
 		"Status":  "success",
 		"Message": "User updated",
 		"Data":    nil,
+	})
+}
+func deleteUser(c *fiber.Ctx) error {
+	var retrievedUser User
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	if db.Where("id = ?", userID).First(&retrievedUser).Error != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "User not found",
+			"Data":    err,
+		})
+	}
+	var notebooks []Notebook
+	if err = db.Preload("Notes").Where("user_id = ?", userID).Find(&notebooks).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Notebook not Found",
+			"Data":    err,
+		})
+	}
+	for _, notebook := range notebooks {
+		if err := db.Select(clause.Associations).Delete(&notebook).Error; err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"Status":  "error",
+				"Message": "Failed to delete notebooks",
+				"Data":    err,
+			})
+		}
+	}
+	if err := db.Select(clause.Associations).Delete(&User{Model: gorm.Model{ID: userID}}).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Failed to delete user",
+			"Data":    err,
+		})
+	}
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "User deleted",
+		"Data":    userID,
 	})
 }
 

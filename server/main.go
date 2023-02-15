@@ -48,7 +48,7 @@ func main() {
 	}))
 	user.Get("/", getUser)
 	user.Put("/", updateUser)
-	//user.Delete("/")
+	user.Delete("/", deleteUser)
 
 	notebooks := app.Group("/notebooks")
 	notebooks.Use(jwtware.New(jwtware.Config{
