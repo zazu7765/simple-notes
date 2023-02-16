@@ -1,7 +1,5 @@
 import { redirect } from '@sveltejs/kit';
 
-
-
 export async function load({ locals, params }) {
 	const name = await params.slug
 	let login = false;
