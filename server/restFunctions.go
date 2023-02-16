@@ -137,7 +137,7 @@ func signUpUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "Database Error",
-			"Data":    "Could not create User",
+			"Data":    "User already exists!",
 		})
 	}
 
@@ -409,6 +409,29 @@ func getAllNotes(c *fiber.Ctx) error {
 		"Status":  "success",
 		"Message": "All User Notes Retrieved",
 		"Data":    notes,
+	})
+}
+func deleteNote(c *fiber.Ctx) error {
+	id, _ := strconv.Atoi(c.Params("id"))
+	_, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	if err := db.Delete(&Note{Model: gorm.Model{ID: uint(id)}}).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Note could not be deleted",
+			"Data":    err,
+		})
+	}
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "User Deleted",
+		"Data":    nil,
 	})
 }
 
