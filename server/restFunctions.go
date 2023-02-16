@@ -329,7 +329,7 @@ func deleteUser(c *fiber.Ctx) error {
 		})
 	}
 	for _, notebook := range notebooks {
-		if err := db.Select(clause.Associations).Delete(&notebook).Error; err != nil {
+		if err := db.Select(clause.Associations).Unscoped().Delete(&notebook).Error; err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"Status":  "error",
 				"Message": "Failed to delete notebooks",
@@ -337,7 +337,7 @@ func deleteUser(c *fiber.Ctx) error {
 			})
 		}
 	}
-	if err := db.Select(clause.Associations).Delete(&User{Model: gorm.Model{ID: userID}}).Error; err != nil {
+	if err := db.Select(clause.Associations).Unscoped().Delete(&User{Model: gorm.Model{ID: userID}}).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "Failed to delete user",
