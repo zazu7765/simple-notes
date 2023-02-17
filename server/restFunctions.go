@@ -211,6 +211,7 @@ func getUser(c *fiber.Ctx) error {
 	var retrievedUser User
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
@@ -259,6 +260,7 @@ func updateUser(c *fiber.Ctx) error {
 	}
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
@@ -307,6 +309,7 @@ func deleteUser(c *fiber.Ctx) error {
 	var retrievedUser User
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
@@ -357,6 +360,7 @@ func getNote(c *fiber.Ctx) error {
 	note := Note{Model: gorm.Model{ID: uint(id)}}
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
@@ -387,6 +391,7 @@ func getNote(c *fiber.Ctx) error {
 func getAllNotes(c *fiber.Ctx) error {
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
@@ -415,13 +420,14 @@ func deleteNote(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
 	_, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
 			"Data":    err,
 		})
 	}
-	if err := db.Delete(&Note{Model: gorm.Model{ID: uint(id)}}).Error; err != nil {
+	if err := db.Unscoped().Delete(&Note{Model: gorm.Model{ID: uint(id)}}).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "Note could not be deleted",
@@ -440,6 +446,7 @@ func getNotebook(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
@@ -463,6 +470,7 @@ func getNotebook(c *fiber.Ctx) error {
 func getAllNotebooks(c *fiber.Ctx) error {
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
+		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JWT Expired or Invalid",
