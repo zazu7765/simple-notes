@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// REQUEST/RESPONSE STRUCTS
+// REQUEST STRUCTS
 type signupRequest struct {
 	Name     string `json:"name" ,validate:"required"`
 	Email    string `json:"email" ,validate:"required"`
@@ -22,6 +22,13 @@ type loginRequest struct {
 	Email    string `json:"email" ,validate:"required"`
 	Password string `json:"password" ,validate:"required"`
 }
+
+type noteUpdateRequest struct {
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+// RESPONSE STRUCTS
 type loginResponse struct {
 	WebToken   string
 	Expiration int64
@@ -439,6 +446,59 @@ func deleteNote(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"Status":  "success",
 		"Message": "User Deleted",
+		"Data":    nil,
+	})
+}
+func updateNote(c *fiber.Ctx) error {
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	id, _ := strconv.Atoi(c.Params("id"))
+	if err != nil {
+		c.ClearCookie("jwt")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	req := new(noteUpdateRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	note := Note{Model: gorm.Model{ID: uint(id)}}
+	if err = db.Table("notes").Select("notes.title, notes.content, notebook_id, notebooks.user_id").Joins("inner join notebooks on notebooks.id = notebook_id").Joins("inner join users on users.id = notebooks.user_id").Where("notebooks.user_id = ?", userID).First(&note).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"Status":  "error",
+				"Message": "Database Error",
+				"Data":    "Note not Found",
+			})
+		}
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Note not Found",
+			"Data":    err,
+		})
+	}
+	if len(req.Title) > 0 {
+		note.Title = req.Title
+	}
+	if len(req.Content) > 0 {
+		note.Content = req.Content
+	}
+	if err = db.Save(&note).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Unable to update note",
+			"Data":    err,
+		})
+	}
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "Note updated",
 		"Data":    nil,
 	})
 }

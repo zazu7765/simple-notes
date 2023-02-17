@@ -68,8 +68,8 @@ func main() {
 	notes.Get("/all", getAllNotes)
 
 	//notes.Post("/")
-	//notes.Put("/")
-	notes.Delete("/:id", deleteNote)
+	notes.Put("/note/:id", updateNote)
+	notes.Delete("/note/:id", deleteNote)
 
 	public := app.Group("/public")
 	public.Get("/", func(c *fiber.Ctx) error {
