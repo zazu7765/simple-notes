@@ -73,7 +73,7 @@ func getDefault(c *fiber.Ctx) error {
 	})
 }
 
-// USER FUNCTIONS
+// AUTH FUNCTIONS
 func signUpUser(c *fiber.Ctx) error {
 	req := new(signupRequest)
 	if err := c.BodyParser(req); err != nil {
@@ -207,6 +207,8 @@ func loginUser(c *fiber.Ctx) error {
 			user.Name},
 	})
 }
+
+// USER FUNCTIONS
 func getUser(c *fiber.Ctx) error {
 	var retrievedUser User
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))

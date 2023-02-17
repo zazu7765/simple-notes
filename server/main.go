@@ -38,8 +38,8 @@ func main() {
 
 	app.Get("/", getDefault)
 
-	sessions := app.Group("/session")
-	sessions.Post("/create", signUpUser)
+	sessions := app.Group("/auth")
+	sessions.Post("/signup", signUpUser)
 	sessions.Post("/login", loginUser)
 
 	user := app.Group("/user")
