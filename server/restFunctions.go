@@ -14,7 +14,7 @@ import (
 
 // REQUEST STRUCTS
 type validatorStructs interface {
-	signupRequest | loginRequest | noteRequest | idRequest | updateRequest
+	signupRequest | loginRequest | createNoteRequest | updateNoteRequest | idRequest | updateRequest
 }
 type signupRequest struct {
 	Name     string `json:"name" ,validate:"required"`
@@ -31,10 +31,16 @@ type loginRequest struct {
 	Password string `json:"password" ,validate:"required"`
 }
 
-type noteRequest struct {
+type updateNoteRequest struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
 	ID      string `json:"id" validate:"required"`
+}
+
+type createNoteRequest struct {
+	Title   string `json:"title" validate:"required"`
+	Content string `json:"content"`
+	ID      string `json:"notebook" validate:"required"`
 }
 
 type idRequest struct {
@@ -267,6 +273,7 @@ func getUser(c *fiber.Ctx) error {
 	})
 }
 func updateUser(c *fiber.Ctx) error {
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	var retrievedUser User
 	req := new(updateRequest)
 	if err := validateStructs(req); err != nil {
@@ -283,7 +290,6 @@ func updateUser(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
 		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -387,6 +393,7 @@ func deleteUser(c *fiber.Ctx) error {
 
 // NOTES FUNCTIONS
 func getNote(c *fiber.Ctx) error {
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	req := new(idRequest)
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -404,7 +411,6 @@ func getNote(c *fiber.Ctx) error {
 	}
 	id, _ := strconv.Atoi(req.ID)
 	note := Note{Model: gorm.Model{ID: uint(id)}}
-	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
 		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -511,7 +517,7 @@ func updateNote(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	req := new(noteRequest)
+	req := new(updateNoteRequest)
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
@@ -562,11 +568,63 @@ func updateNote(c *fiber.Ctx) error {
 	})
 }
 func createNote(c *fiber.Ctx) error {
-	return nil
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		c.ClearCookie("jwt")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	req := new(createNoteRequest)
+	if err = c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	id, _ := strconv.Atoi(req.ID)
+	notebook := Notebook{Model: gorm.Model{ID: uint(id)}}
+	if err = db.Where("user_id = ?", userID).First(&notebook).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Notebook not Found",
+			"Data":    err,
+		})
+	}
+	if err = db.Model(&notebook).Association("Notes").Append(&Note{
+		Title: req.Title,
+	}); err != nil {
+		return err
+	}
+	db.Save(&notebook)
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "Note created",
+		"Data":    nil,
+	})
 }
 
 // NOTEBOOK FUNCTIONS
 func getNotebook(c *fiber.Ctx) error {
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		c.ClearCookie("jwt")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
 	req := new(idRequest)
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -583,15 +641,6 @@ func getNotebook(c *fiber.Ctx) error {
 		})
 	}
 	id, _ := strconv.Atoi(req.ID)
-	userID, err := checkToken(c.Locals("user").(*jwt.Token))
-	if err != nil {
-		c.ClearCookie("jwt")
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"Status":  "error",
-			"Message": "JWT Expired or Invalid",
-			"Data":    err,
-		})
-	}
 	notebook := Notebook{Model: gorm.Model{ID: uint(id)}}
 	if err = db.Where("user_id = ?", userID).First(&notebook).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
