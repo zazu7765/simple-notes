@@ -52,7 +52,7 @@ func main() {
 	notebooks.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("bananas"),
 	}))
-	notebooks.Get("/notebook/:id", getNotebook)
+	notebooks.Get("/notebook/", getNotebook)
 	notebooks.Get("/all", getAllNotebooks)
 	//notebooks.Post("/")
 	//notebooks.Put("")
@@ -62,12 +62,12 @@ func main() {
 	notes.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("bananas"),
 	}))
-	notes.Get("/note/:id", getNote)
+	notes.Get("/note/", getNote)
 	notes.Get("/all", getAllNotes)
 
 	//notes.Post("/")
-	notes.Put("/note/:id", updateNote)
-	notes.Delete("/note/:id", deleteNote)
+	notes.Put("/note/", updateNote)
+	notes.Delete("/note/", deleteNote)
 
 	public := app.Group("/public")
 	public.Get("/", func(c *fiber.Ctx) error {

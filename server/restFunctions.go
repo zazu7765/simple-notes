@@ -13,19 +13,32 @@ import (
 )
 
 // REQUEST STRUCTS
+type validatorStructs interface {
+	signupRequest | loginRequest | noteRequest | idRequest | updateRequest
+}
 type signupRequest struct {
 	Name     string `json:"name" ,validate:"required"`
 	Email    string `json:"email" ,validate:"required"`
 	Password string `json:"password" ,validate:"required"`
+}
+type updateRequest struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 type loginRequest struct {
 	Email    string `json:"email" ,validate:"required"`
 	Password string `json:"password" ,validate:"required"`
 }
 
-type noteUpdateRequest struct {
+type noteRequest struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
+	ID      string `json:"id" validate:"required"`
+}
+
+type idRequest struct {
+	ID string `json:"id" validate:"required"`
 }
 
 // RESPONSE STRUCTS
@@ -52,16 +65,7 @@ func checkPassword(storedPassword string, checkPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(checkPassword))
 	return err == nil
 }
-func validateLogin(request *loginRequest) []*validator.FieldError {
-	var fieldErrors []*validator.FieldError
-	if err := validate.Struct(request); err != nil {
-		for _, err := range err.(validator.ValidationErrors) {
-			fieldErrors = append(fieldErrors, &err)
-		}
-	}
-	return fieldErrors
-}
-func validateSignUp(request *signupRequest) []*validator.FieldError {
+func validateStructs[T validatorStructs](request *T) []*validator.FieldError {
 	var fieldErrors []*validator.FieldError
 	if err := validate.Struct(request); err != nil {
 		for _, err := range err.(validator.ValidationErrors) {
@@ -90,7 +94,7 @@ func signUpUser(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	if err := validateSignUp(req); err != nil {
+	if err := validateStructs(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JSON Validation Failed",
@@ -175,7 +179,7 @@ func loginUser(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	if err := validateLogin(req); err != nil {
+	if err := validateStructs(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "Bad Credentials",
@@ -264,8 +268,8 @@ func getUser(c *fiber.Ctx) error {
 }
 func updateUser(c *fiber.Ctx) error {
 	var retrievedUser User
-	req := new(signupRequest)
-	if err := validateSignUp(req); err != nil {
+	req := new(updateRequest)
+	if err := validateStructs(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "JSON Validation Failed",
@@ -310,9 +314,15 @@ func updateUser(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	retrievedUser.Name = req.Name
-	retrievedUser.Email = req.Email
-	retrievedUser.Password = string(hash)
+	if len(req.Name) > 0 {
+		retrievedUser.Name = req.Name
+	}
+	if len(req.Email) > 0 {
+		retrievedUser.Email = req.Email
+	}
+	if len(req.Password) > 0 {
+		retrievedUser.Password = string(hash)
+	}
 	if err := db.Save(&retrievedUser).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"Status":  "error",
@@ -377,7 +387,22 @@ func deleteUser(c *fiber.Ctx) error {
 
 // NOTES FUNCTIONS
 func getNote(c *fiber.Ctx) error {
-	id, _ := strconv.Atoi(c.Params("id"))
+	req := new(idRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	id, _ := strconv.Atoi(req.ID)
 	note := Note{Model: gorm.Model{ID: uint(id)}}
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
@@ -438,7 +463,22 @@ func getAllNotes(c *fiber.Ctx) error {
 	})
 }
 func deleteNote(c *fiber.Ctx) error {
-	id, _ := strconv.Atoi(c.Params("id"))
+	req := new(idRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	id, _ := strconv.Atoi(req.ID)
 	_, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
 		c.ClearCookie("jwt")
@@ -448,7 +488,7 @@ func deleteNote(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	if err := db.Unscoped().Delete(&Note{Model: gorm.Model{ID: uint(id)}}).Error; err != nil {
+	if err = db.Unscoped().Delete(&Note{Model: gorm.Model{ID: uint(id)}}).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"Status":  "error",
 			"Message": "Note could not be deleted",
@@ -463,7 +503,6 @@ func deleteNote(c *fiber.Ctx) error {
 }
 func updateNote(c *fiber.Ctx) error {
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
-	id, _ := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		c.ClearCookie("jwt")
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -472,7 +511,7 @@ func updateNote(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	req := new(noteUpdateRequest)
+	req := new(noteRequest)
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
@@ -480,6 +519,14 @@ func updateNote(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	id, _ := strconv.Atoi(req.ID)
 	note := Note{Model: gorm.Model{ID: uint(id)}}
 	if err = db.Table("notes").Select("notes.title, notes.content, notebook_id, notebooks.user_id").Joins("inner join notebooks on notebooks.id = notebook_id").Joins("inner join users on users.id = notebooks.user_id").Where("notebooks.user_id = ?", userID).First(&note).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -514,13 +561,28 @@ func updateNote(c *fiber.Ctx) error {
 		"Data":    nil,
 	})
 }
-func createUser(c *fiber.Ctx) error {
+func createNote(c *fiber.Ctx) error {
 	return nil
 }
 
 // NOTEBOOK FUNCTIONS
 func getNotebook(c *fiber.Ctx) error {
-	id, _ := strconv.Atoi(c.Params("id"))
+	req := new(idRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	id, _ := strconv.Atoi(req.ID)
 	userID, err := checkToken(c.Locals("user").(*jwt.Token))
 	if err != nil {
 		c.ClearCookie("jwt")
