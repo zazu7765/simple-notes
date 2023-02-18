@@ -214,6 +214,18 @@ func loginUser(c *fiber.Ctx) error {
 			user.Name},
 	})
 }
+func generateJWT(user User) (string, int64, error) {
+	exp := time.Now().Add(time.Minute * 30).Unix()
+	JWTToken := jwt.New(jwt.SigningMethodHS256)
+	claim := JWTToken.Claims.(jwt.MapClaims)
+	claim["user_id"] = user.ID
+	claim["expiration"] = exp
+	t, err := JWTToken.SignedString([]byte("bananas"))
+	if err != nil {
+		return "", 0, err
+	}
+	return t, exp, nil
+}
 
 // USER FUNCTIONS
 func getUser(c *fiber.Ctx) error {
@@ -502,6 +514,9 @@ func updateNote(c *fiber.Ctx) error {
 		"Data":    nil,
 	})
 }
+func createUser(c *fiber.Ctx) error {
+	return nil
+}
 
 // NOTEBOOK FUNCTIONS
 func getNotebook(c *fiber.Ctx) error {
@@ -549,4 +564,13 @@ func getAllNotebooks(c *fiber.Ctx) error {
 		"Data":    notebooks,
 	})
 
+}
+func deleteNotebook(c *fiber.Ctx) error {
+	return nil
+}
+func updateNotebook(c *fiber.Ctx) error {
+	return nil
+}
+func createNotebook(c *fiber.Ctx) error {
+	return nil
 }
