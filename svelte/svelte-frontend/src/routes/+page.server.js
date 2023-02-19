@@ -1,12 +1,14 @@
 
 
+/** @type {import('./$types').PageServerLoad} */
 
-export function load({ locals}) {
+export async function load ({ locals}) {
 	let login = false;
 
-	if (locals.user) login=true
+	if (await locals.user && await locals.token){
+		login=true}
     
-	return{
-		bool: login,
-	}
+	return{ user:{
+		bool: login
+	}}
 }

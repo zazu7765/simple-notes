@@ -8,7 +8,7 @@
 </div>
 
 <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-	<div class="w-full max-w-md space-y-8">
+	<div class="w-full max-w-md space-y-8 p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
 		<div>
 			<img
 				class="mx-auto h-12 w-auto"
@@ -62,23 +62,24 @@
 				</div>
 			</div>
 
-			<div class="flex items-center justify-between">
+			<!-- <div class="flex items-center justify-between">
 				<div class="flex items-center">
 					<input
 						id="remember-me"
 						name="remember-me"
 						type="checkbox"
 						class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-					/>
+					/> -->
 					<!-- <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label> -->
-				</div>
+				<!-- </div> -->
+				<!-- probebly dont need password recovery -->
 
-				<div class="text-sm">
+				<!-- <div class="text-sm">
 					<a href="../notes" class="font-medium text-indigo-600 hover:text-indigo-500"
 						>Forgot your password?</a
 					>
-				</div>
-			</div>
+				</div> -->
+			<!-- </div> -->
 
 			<div>
 				<button
