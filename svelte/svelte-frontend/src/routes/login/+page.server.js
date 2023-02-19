@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-
+export const prerender = false
 export function load({ locals }) {
 	if (locals.user) throw redirect(302, '/notes');
 }

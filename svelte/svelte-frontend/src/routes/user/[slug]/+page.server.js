@@ -11,12 +11,20 @@ export async function load({ locals, params }) {
 			'Content-Type': 'application/json'
 		}
 	});
+	const responseNote = await fetch('http://localhost:81/notes/all', {
+		method: 'GET',
+		headers: {
+			Authorization: 'Bearer ' + locals.token,
+			'Content-Type': 'application/json'
+		}
+	});
 	if (!locals.user) throw redirect(302, '/login');
 	if (locals.user) login = true;
-
+	
 	return {
 		name: locals.user,
 		response: await response.json(),
+		responseNote: await responseNote.json(),
 		bool: login
 	};
 }

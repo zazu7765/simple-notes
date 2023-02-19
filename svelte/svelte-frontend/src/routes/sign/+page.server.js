@@ -45,6 +45,6 @@ export const actions = {
 			path: '/',
 			maxAge: dataPost['Data']['Expiration']
 		});
-		throw redirect(302, '/user'+dataPost['Data']['Username']);
+		throw redirect(302, '/user/'+dataPost['Data']['Username']);
 	}
 };
