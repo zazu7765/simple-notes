@@ -44,6 +44,7 @@ func main() {
 	user.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("bananas"),
 	}))
+
 	user.Get("/", getUser)
 	user.Put("/", updateUser)
 	user.Delete("/", deleteUser)
@@ -52,22 +53,23 @@ func main() {
 	notebooks.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("bananas"),
 	}))
-	notebooks.Get("/notebook/", getNotebook)
+
+	notebooks.Get("/", getNotebook)
 	notebooks.Get("/all", getAllNotebooks)
-	//notebooks.Post("/")
-	//notebooks.Put("")
-	//notebooks.Delete("/")
+	notebooks.Post("/", createNotebook)
+	notebooks.Put("/", updateNotebook)
+	notebooks.Delete("/", deleteNotebook)
 
 	notes := app.Group("/notes")
 	notes.Use(jwtware.New(jwtware.Config{
 		SigningKey: []byte("bananas"),
 	}))
-	notes.Get("/note/", getNote)
-	notes.Get("/all", getAllNotes)
 
-	notes.Post("/note", createNote)
-	notes.Put("/note/", updateNote)
-	notes.Delete("/note/", deleteNote)
+	notes.Get("/", getNote)
+	notes.Get("/all", getAllNotes)
+	notes.Post("/", createNote)
+	notes.Put("/", updateNote)
+	notes.Delete("/", deleteNote)
 
 	public := app.Group("/public")
 	public.Get("/", func(c *fiber.Ctx) error {

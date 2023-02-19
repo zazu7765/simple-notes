@@ -14,7 +14,7 @@ import (
 
 // REQUEST STRUCTS
 type validatorStructs interface {
-	signupRequest | loginRequest | createNoteRequest | updateNoteRequest | idRequest | updateRequest
+	signupRequest | loginRequest | titleIdRequest | titleRequest | optionsWithIdRequest | idRequest | updateRequest
 }
 type signupRequest struct {
 	Name     string `json:"name" ,validate:"required"`
@@ -31,20 +31,20 @@ type loginRequest struct {
 	Password string `json:"password" ,validate:"required"`
 }
 
-type updateNoteRequest struct {
+type optionsWithIdRequest struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
 	ID      string `json:"id" validate:"required"`
 }
-
-type createNoteRequest struct {
-	Title   string `json:"title" validate:"required"`
-	Content string `json:"content"`
-	ID      string `json:"notebook" validate:"required"`
+type titleIdRequest struct {
+	Title string `json:"title" validate:"required"`
+	ID    string `json:"notebook" validate:"required"`
 }
-
 type idRequest struct {
 	ID string `json:"id" validate:"required"`
+}
+type titleRequest struct {
+	Title string `validate:"required"`
 }
 
 // RESPONSE STRUCTS
@@ -119,7 +119,7 @@ func signUpUser(c *fiber.Ctx) error {
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: string(hash),
-		Notebook: []Notebook{
+		Notebooks: []Notebook{
 			{
 				Title: "Personal Notebook",
 				Notes: []Note{
@@ -517,7 +517,7 @@ func updateNote(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	req := new(updateNoteRequest)
+	req := new(optionsWithIdRequest)
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
@@ -577,7 +577,7 @@ func createNote(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	req := new(createNoteRequest)
+	req := new(titleIdRequest)
 	if err = c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
@@ -671,17 +671,156 @@ func getAllNotebooks(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{
 		"Status":  "success",
-		"Message": "All User Notes Retrieved",
+		"Message": "All User Notebooks Retrieved",
 		"Data":    notebooks,
 	})
 
 }
 func deleteNotebook(c *fiber.Ctx) error {
-	return nil
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		c.ClearCookie("jwt")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	req := new(idRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	id, _ := strconv.Atoi(req.ID)
+	notebook := Notebook{Model: gorm.Model{ID: uint(id)}}
+	if err = db.Where("user_id = ?", userID).First(&notebook).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Notebook not Found",
+			"Data":    err,
+		})
+	}
+	if err := db.Select(clause.Associations).Unscoped().Delete(&notebook).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Failed to delete notebook",
+			"Data":    err,
+		})
+	}
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "notebook deleted",
+		"Data":    nil,
+	})
 }
 func updateNotebook(c *fiber.Ctx) error {
-	return nil
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		c.ClearCookie("jwt")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	req := new(titleIdRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	id, _ := strconv.Atoi(req.ID)
+	notebook := Notebook{Model: gorm.Model{ID: uint(id)}}
+	if err = db.Where("user_id = ?", userID).First(&notebook).Error; err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Notebook not Found",
+			"Data":    err,
+		})
+	}
+	if len(req.Title) > 0 {
+		notebook.Title = req.Title
+	}
+	db.Save(&notebook)
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "Notebook updated",
+		"Data":    nil,
+	})
 }
 func createNotebook(c *fiber.Ctx) error {
-	return nil
+	userID, err := checkToken(c.Locals("user").(*jwt.Token))
+	if err != nil {
+		c.ClearCookie("jwt")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JWT Expired or Invalid",
+			"Data":    err,
+		})
+	}
+	req := new(titleRequest)
+	if err = c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Parsing Failed",
+			"Data":    err,
+		})
+	}
+	if err := validateStructs(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "JSON Validation Failed",
+			"Data":    err,
+		})
+	}
+	var retrievedUser User
+	if db.Where("id = ?", userID).First(&retrievedUser).Error != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"Status":  "error",
+				"Message": "Database Error",
+				"Data":    "User not Found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Database Error",
+			"Data":    err,
+		})
+	}
+	err = db.Model(&retrievedUser).Association("Notebooks").Append(&Notebook{
+		Title: req.Title,
+	})
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"Status":  "error",
+			"Message": "Error creating notebook",
+			"Data":    err,
+		})
+	}
+	db.Save(&retrievedUser)
+	return c.JSON(fiber.Map{
+		"Status":  "success",
+		"Message": "Notebook Created",
+		"Data":    nil,
+	})
 }
