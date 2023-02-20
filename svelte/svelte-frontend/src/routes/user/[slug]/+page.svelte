@@ -16,7 +16,7 @@
 	let num = 5;
 	console.log(data);
 	let content = data['response']['Data'];
-	let arr: Array<String>[] = [];
+	let arr: Array<string>[] = [];
 	for (const item in content) {
 		arr.push([content[item]['ID'], content[item]['Title']]);
 	}

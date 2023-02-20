@@ -1,10 +1,7 @@
 <script lang="ts">
-	import { writable } from "svelte/store";
-    import { write } from "../lib/notes"
 
     export let title: string;
-    let notes;
-    write.subscribe((arg)=>notes)
+
 
 </script>
 
