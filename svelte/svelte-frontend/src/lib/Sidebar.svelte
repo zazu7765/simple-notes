@@ -12,7 +12,7 @@
     for (const note in notes['Data']){
         console.log(notes["Data"][note]['Title'])
         if (notes["Data"][note]['NotebookID'] == name[0]){
-            arrayNote.push(notes["Data"][note]['Title'])
+            arrayNote.push(notes["Data"][note])
             console.log("afjklns;hhjlfdshjkldfhjksaglhjklfdjhkldfshjkldfsa")
         }
     }
@@ -28,8 +28,8 @@
     <ul id={name[1]} class="hidden py-2 space-y-2">
         {#if arrayNote}
         {#each arrayNote as titles, index}
-        <ElementD title = {titles} />
-        
+        <ElementD title = {titles['Title']} id = {titles['ID']}/>
+        fsadfdsa
         {/each}
         {/if}
         

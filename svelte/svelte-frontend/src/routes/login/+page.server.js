@@ -38,7 +38,7 @@ export const actions = {
 		//   let parsed = JSON.parse(total);
 		//   console.log(dataPost['token']);
 
-		console.log(dataPost['Data']);
+		console.log(dataPost['Data']['Expiration']+"timestamp");
 		cookies.set('jwt', dataPost['Data']['WebToken'], { path: '/', maxAge: dataPost['Data']['Expiration'] });
     cookies.set('user', dataPost['Data']['Username'], { path: '/', maxAge: dataPost['Data']['Expiration'] });
 
