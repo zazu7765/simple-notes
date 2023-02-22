@@ -123,7 +123,7 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
 		</div>
 	</aside>
 
-	<div id="main" class="p-4 {blur} inset-0">
+	<div id="main" class="p-4 {blur} inset-0" on:click={()=>{closeNav()}}>
 		<div
 			class="p-4 border-2 bg-white border-gray-500 border-dashed rounded-lg dark:border-gray-700"
 		>
