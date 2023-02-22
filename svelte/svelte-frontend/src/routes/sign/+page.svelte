@@ -8,7 +8,7 @@
 </div>
 
 <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-	<div class="w-full max-w-md space-y-8 p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+	<div class="w-full max-w-md space-y-8 p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
 		<div>
 			<img
 				class="mx-auto h-12 w-auto"
@@ -16,7 +16,7 @@
 				alt="Your Company"
 			/>
 			<h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-				Sign in to your Note's account
+				Sign up for a new account!
 			</h2>
 			<!-- <p class="mt-2 text-center text-sm text-gray-600">
           Or
@@ -44,7 +44,7 @@
 						type="email"
 						autocomplete="email"
 						required
-						class="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+						class="relative block w-full appearance-none rounded-none border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 						placeholder="Email address"
 					/>
 				</div>

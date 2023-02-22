@@ -57,7 +57,7 @@
 -->
 <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8 ">
 	<div
-		class="w-full max-w-md space-y-8 p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+		class="w-full max-w-md space-y-8 p-4 bg-white border border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 	>
 		<div>
 			<img
@@ -66,7 +66,7 @@
 				alt="Your Company"
 			/>
 			<h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-				Sign in to your Note's account
+				Login to your existing account!
 			</h2>
 			<!-- <p class="mt-2 text-center text-sm text-gray-600">
           Or
