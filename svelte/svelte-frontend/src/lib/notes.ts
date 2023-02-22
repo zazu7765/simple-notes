@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
 
 
-export let write = writable(null);
+let write = writable(null);
+export {write}
