@@ -2,7 +2,7 @@
 	import { redirect } from '@sveltejs/kit';
 	import Sidebar from '../../../lib/Sidebar.svelte';
 	import { write } from '../../../lib/notes';
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	export let data: any;
 	let login = data.bool;
 	$write = data['responseNote'];
@@ -38,6 +38,9 @@
 	let screenWidth;
 	if (browser){
         innerWidth = window.innerWidth;
+		  if (innerWidth < 375){
+			 openNav();
+		  }
     }
 
 </script>
