@@ -3,6 +3,16 @@
 	import Sidebar from '../../../lib/Sidebar.svelte';
 	import { write } from '../../../lib/notes';
 	import { browser } from '$app/environment';
+	import { onDestroy } from 'svelte';
+
+	import { quill } from 'svelte-quill'
+	
+	let options = { placeholder: "Write something from outside...", }
+	
+	let contentEdit = { html: '', text: ''};
+    onDestroy(()=> {
+        
+    });
 	export let data: any;
 	let login = data.bool;
 	$write = data['responseNote'];
@@ -126,7 +136,7 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
 	<div id="main" class="p-4 {blur} inset-0" on:click={()=>{closeNav()}}>
 		<div
 			class="p-4 border-2 bg-white border-gray-500 border-dashed rounded-lg dark:border-gray-700"
-		>
+		> <div class="editor min-h-screen" use:quill={options} on:text-change={e => contentEdit = e.detail} />
 			<!-- <div class="editor min-h-screen" use:quill={options} on:text-change={e => content = e.detail} /> -->
 		</div>
 	</div>

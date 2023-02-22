@@ -81,7 +81,7 @@
  
  <div class="p-4 sm:ml-64">
     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-        <div class="editor min-h-screen" use:quill={options} on:text-change={e => content = e.detail} />
+       
     </div>
  </div>
  
