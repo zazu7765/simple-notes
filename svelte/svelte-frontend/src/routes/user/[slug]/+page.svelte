@@ -24,18 +24,31 @@
 	let go = () => {
 		throw redirect(302, '/login');
 	};
-	let ww = "w-64";
+	let ww = "w-0";
+	let blur = "";
 	function openNav() {
 		ww = "w-64"
+		blur = "blur-sm";
 	}
 	function closeNav() {
-	  ww = "w-0 hidden";
-
+	  ww = "w-0";
+	  blur = '';
+	
 	}
+	let screenWidth;
+	if (browser){
+        innerWidth = window.innerWidth;
+    }
+	
 </script>
 
 
+<!-- <svelte:window bind:innerWidth={screenWidth} />
+{#if screenWidth < 600}
 	
+{:else}
+ 
+{/if} -->
 <button on:click={()=>{
 	openNav();
 }} type="button" class="Class
@@ -48,7 +61,7 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
  </button>
  
  <aside class="ease-in-out duration-300 fixed top-0 left-0 z-40 {ww} h-screen " aria-label="Sidebar">
-	<div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
+	<div class="h-full py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
 	   <ul class="space-y-2">
 		
 			<button  class="flex items-center pl-2.5 mb-5" on:click={()=>{closeNav()}}>
@@ -117,7 +130,7 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
 		</div>
 	</aside>
 
-	<div id="main" class="p-4 sm:ml-64 inset-0">
+	<div id="main" class="p-4 {blur} inset-0">
 		<div
 			class="p-4 border-2 bg-white border-gray-500 border-dashed rounded-lg dark:border-gray-700"
 		>
