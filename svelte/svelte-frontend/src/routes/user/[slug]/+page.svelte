@@ -2,7 +2,7 @@
 	import { redirect } from '@sveltejs/kit';
 	import Sidebar from '../../../lib/Sidebar.svelte';
 	import { write } from '../../../lib/notes';
-	
+	import { browser } from '$app/env';
 	export let data: any;
 	let login = data.bool;
 	$write = data['responseNote'];
@@ -39,7 +39,7 @@
 	if (browser){
         innerWidth = window.innerWidth;
     }
-	
+
 </script>
 
 
