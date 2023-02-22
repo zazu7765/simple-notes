@@ -52,7 +52,7 @@
 	</button>
 	<ul class="{menu} py-2 space-y-2">
 		{#if arrayNote}
-			{#each arrayNote as titles, index}
+			{#each arrayNote as titles}
 				<ElementD title={titles['Title']} id={titles['ID']} />
 			{/each}
 		{/if}
