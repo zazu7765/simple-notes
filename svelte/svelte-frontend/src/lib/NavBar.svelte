@@ -36,6 +36,7 @@
             px-4
             text-lg text-gray-700
             bg-white
+			border-b-2 border-gray-200
 
           "
 			>
