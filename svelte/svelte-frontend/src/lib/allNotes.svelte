@@ -66,13 +66,13 @@
 			/>
 		</div>
 		<div>
-			<button
+			<button class="bg-blue-500 rounded-md px-3 py-2 text-white"
 				on:click={() => {
 					addNote();
 				}}
 				on:keydown={() => {
 					addNote();
-				}}>Send!</button
+				}}>+</button
 			>
 		</div>
 	</div>
@@ -81,16 +81,21 @@
 	
 		<div class= " grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
 		{#each $arr.reverse() as title}
-			<div class="p-2">
+			<div class="p-2 group">
 				<a
 					href="notebook-{ids}"
 					class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 				>
-					<h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" />
+					<!-- TODO: REMOVE NOTE FUNCTION-->
+				<button class="hidden float-right top-0 right-0 bg-red-500 rounded-md mx-2 px-2 py-1 text-white group-hover:inline-flex"
+					>X</button>	
+					<h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{title["Title"]}</h5>
 					<p class="font-normal text-gray-700 dark:text-gray-400">
-						{title['Title']}
+						{title['Content']}
 					</p>
+					
 				</a>
+				
 			</div>
 		{/each}
 	</div>
