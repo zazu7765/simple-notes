@@ -4,16 +4,14 @@
 	import { write } from '../../../lib/notes';
 	import { browser } from '$app/environment';
 	import { onDestroy } from 'svelte';
-	import NoteBook from '../../../lib/notes.svelte'
+	import NoteBook from '../../../lib/notes.svelte';
 
-	import { quill } from 'svelte-quill'
-	
-	let options = { placeholder: "Write something from outside...", }
-	
-	let contentEdit = { html: '', text: ''};
-    onDestroy(()=> {
-        
-    });
+	import { quill } from 'svelte-quill';
+
+	let options = { placeholder: 'Write something from outside...' };
+
+	let contentEdit = { html: '', text: '' };
+	onDestroy(() => {});
 	export let data: any;
 	let login = data.bool;
 	$write = data['responseNote'];
@@ -35,27 +33,27 @@
 	let go = () => {
 		throw redirect(302, '/login');
 	};
-	let ww = "w-0";
-	let blur = "";
+	let ww = 'w-0';
+	let blur = '';
+	let pointer = '';
 	function openNav() {
-		ww = "w-64"
-		blur = "blur-sm";
+		ww = 'w-64';
+		blur = 'blur-sm';
+		pointer = 'pointer-events-none';
 	}
 	function closeNav() {
-	  ww = "w-0";
-	  blur = '';
-	
+		ww = 'w-0';
+		blur = '';
+		pointer = '';
 	}
 	let screenWidth;
-	if (browser){
-        innerWidth = window.innerWidth;
-		  if (innerWidth < 375){
-			 openNav();
-		  }
-    }
-
+	if (browser) {
+		innerWidth = window.innerWidth;
+		if (innerWidth < 375) {
+			openNav();
+		}
+	}
 </script>
-
 
 <!-- <svelte:window bind:innerWidth={screenWidth} />
 {#if screenWidth < 600}
@@ -63,22 +61,40 @@
 {:else}
  
 {/if} -->
-<button on:click={()=>{
-	openNav();
-}} type="button" class="Class
+<button
+	on:click={() => {
+		openNav();
+	}}
+	type="button"
+	class="Class
 
-z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+	z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+>
 	<span class="sr-only">Open sidebar</span>
-	<svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-	   <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+	<svg
+		class="w-6 h-6"
+		aria-hidden="true"
+		fill="currentColor"
+		viewBox="0 0 20 20"
+		xmlns="http://www.w3.org/2000/svg"
+	>
+		<path
+			clip-rule="evenodd"
+			fill-rule="evenodd"
+			d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+		/>
 	</svg>
- </button>
- 
- <aside class="ease-in-out duration-300 fixed top-0 left-0 z-40 {ww} h-screen " aria-label="Sidebar">
+</button>
+
+<aside class="ease-in-out duration-300 fixed top-0 left-0 z-40 {ww} h-screen " aria-label="Sidebar">
 	<div class="h-full py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-	   <ul class="space-y-2">
-		
-			<button  class="flex items-center pl-2.5 mb-5" on:click={()=>{closeNav()}}>
+		<ul class="space-y-2">
+			<button
+				class="flex items-center pl-2.5 mb-5"
+				on:click={() => {
+					closeNav();
+				}}
+			>
 				<img
 					src="https://flowbite.com/docs/images/logo.svg"
 					class="h-6 mr-3 sm:h-7"
@@ -86,8 +102,7 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
 				/>
 				<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
 					>Simple Notes
-					</span
-				>
+				</span>
 			</button>
 			<ul class="space-y-2">
 				<li>
@@ -95,7 +110,21 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
 						href="#"
 						class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
 					>
-					 <svg class="h-10 w-10" fill="#000000" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M698.8 563.1l69.2-.1V460.8l-69.1-.2-7.7.2c-14.4-.1-18.4-12-18.4-26.5 0-7.2 2.9-13.7 7.6-18.4l48.8-48.8-72.4-72.4-48.9 48.9c-4.7 4.7-11.2 7.6-18.4 7.6-14.5 0-26.2-11.7-26.3-26.1v-69.2H460.8v68.9h-.1c-.1 14.5-11.8 26.2-26.3 26.2-7.1 0-13.5-2.9-18.2-7.4l-49.1-49.1-72.3 72.4 48.8 48.8s0 .1-.1.1c4.7 4.8 7.6 11.3 7.6 18.5 0 14.4-4 26.2-18.4 26.5H256v102.4l69-.2v.2c14.4.1 26.1 11.8 26.1 26.3 0 7.1-2.9 13.5-7.4 18.2l-49 49 72.4 72.4 48.8-48.8s.1 0 .1.1c4.7-4.6 11.2-7.6 18.4-7.6 14.4 0 26.2 4.1 26.4 18.5 0 0-.1 7.5 0 7.5v69.3l102.4-.2v-69.1h.1c.2-14.4 11.8-26 26.2-26 7.2 0 13.6 2.9 18.4 7.5h.1l48.8 48.8 72.4-72.4-48.8-48.8c-4.6-4.7-7.5-11.2-7.5-18.4-.1-14.6 11.5-26.3 25.9-26.4zM512 614c-56.5 0-102.3-45.8-102.3-102.3S455.5 409.3 512 409.3s102.3 45.8 102.3 102.4C614.4 568.2 568.5 614 512 614z"></path></g></svg>
+						<svg
+							class="h-10 w-10"
+							fill="#000000"
+							viewBox="0 0 1024 1024"
+							xmlns="http://www.w3.org/2000/svg"
+							><g id="SVGRepo_bgCarrier" stroke-width="0" /><g
+								id="SVGRepo_tracerCarrier"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/><g id="SVGRepo_iconCarrier"
+								><path
+									d="M698.8 563.1l69.2-.1V460.8l-69.1-.2-7.7.2c-14.4-.1-18.4-12-18.4-26.5 0-7.2 2.9-13.7 7.6-18.4l48.8-48.8-72.4-72.4-48.9 48.9c-4.7 4.7-11.2 7.6-18.4 7.6-14.5 0-26.2-11.7-26.3-26.1v-69.2H460.8v68.9h-.1c-.1 14.5-11.8 26.2-26.3 26.2-7.1 0-13.5-2.9-18.2-7.4l-49.1-49.1-72.3 72.4 48.8 48.8s0 .1-.1.1c4.7 4.8 7.6 11.3 7.6 18.5 0 14.4-4 26.2-18.4 26.5H256v102.4l69-.2v.2c14.4.1 26.1 11.8 26.1 26.3 0 7.1-2.9 13.5-7.4 18.2l-49 49 72.4 72.4 48.8-48.8s.1 0 .1.1c4.7-4.6 11.2-7.6 18.4-7.6 14.4 0 26.2 4.1 26.4 18.5 0 0-.1 7.5 0 7.5v69.3l102.4-.2v-69.1h.1c.2-14.4 11.8-26 26.2-26 7.2 0 13.6 2.9 18.4 7.5h.1l48.8 48.8 72.4-72.4-48.8-48.8c-4.6-4.7-7.5-11.2-7.5-18.4-.1-14.6 11.5-26.3 25.9-26.4zM512 614c-56.5 0-102.3-45.8-102.3-102.3S455.5 409.3 512 409.3s102.3 45.8 102.3 102.4C614.4 568.2 568.5 614 512 614z"
+								/></g
+							></svg
+						>
 						<span class="flex-1 whitespace-nowrap">Settings</span>
 					</a>
 				</li>
@@ -131,24 +160,26 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
 					</a>
 				</li>
 			</ul>
-		</div>
-	</aside>
-
-	<div id="main" class="p-4 {blur} inset-0" on:keydown={()=>{closeNav()}} on:click={()=>{closeNav()}}>
-		<div
-			class="p-4 border-2 bg-white border-gray-500 border-dashed rounded-lg dark:border-gray-700"
->
-
-			<div class="min-h-screen" >
-
-				{#each arr as name, index}
-
-					<NoteBook content = {name[1]} />
-
-			{/each}
-				</div>
-		</div>
+		</ul>
 	</div>
+</aside>
+
+<div
+	class="min-h-screen p-4 {blur} inset-0"
+	on:keydown={() => {
+		closeNav();
+	}}
+	on:click={() => {
+		closeNav();
+	}}
+>
+	<div class="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 {pointer}">
+		<NoteBook content={"+"}/>
+		{#each arr as name, index}
+			<NoteBook content={name[1]} />
+		{/each}
+	</div>
+</div>
 
 
 <style>

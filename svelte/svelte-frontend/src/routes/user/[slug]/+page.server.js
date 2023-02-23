@@ -18,13 +18,17 @@ export async function load({ locals, params }) {
 			'Content-Type': 'application/json'
 		}
 	});
-	if (!locals.user) throw redirect(302, '/login');
+	if (!locals.user) 
 	if (locals.user) login = true;
-	
+	 let responseJ = await response.json()
+	 let responseNoteJ = await responseNote.json()
+	 if (responseNoteJ["Status"] === "error" || responseJ["Status"] === "error"){
+		throw redirect(302, '/logout');
+	 }
 	return {
 		name: locals.user,
-		response: await response.json(),
-		responseNote: await responseNote.json(),
+		response: responseJ,
+		responseNote: responseNoteJ,
 		bool: login
 	};
 }
