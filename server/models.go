@@ -13,9 +13,10 @@ type User struct {
 }
 type Notebook struct {
 	gorm.Model
-	UserID uint
-	Title  string `gorm:"default:Untitled Notebook"`
-	Notes  []Note `gorm:"foreignKey:NotebookID"`
+	UserID      uint
+	Title       string `gorm:"default:Untitled Notebook"`
+	Description string `gorm:"default: Ex ipsum Lorem sit. Officia mollit et irure id officia est est."`
+	Notes       []Note `gorm:"foreignKey:NotebookID"`
 }
 type Note struct {
 	gorm.Model
