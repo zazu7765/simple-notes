@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { storage, write } from './notes';
 	import { writable } from 'svelte/store';
+	import { redirect } from '@sveltejs/kit';
 	export let ids: string;
 	export let token: string;
 	let notes;
@@ -66,9 +67,43 @@
 			zindex = '0';
 		}
 	}
-	$: deleteNote = ()=>{
-		
+
+	$: deleteNote = async (noteId: string)=>{
+		const formData = new FormData();
+			formData.append('id', noteId);
+		const deleteNote = await fetch('http://localhost:81/notes/', {
+			
+			method: 'DELETE',
+			body: formData,
+			headers: {
+				Authorization: 'Bearer ' + token,
+
+			}
+		});
+		let data = await deleteNote.json()
+		if (data["Status"]=="error") {
+			throw redirect(302, "/logout") 
+		}
+		const responseNote = await fetch('http://localhost:81/notes/all', {
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer ' + token,
+				'Content-Type': 'application/json'
+			}
+		});
+		notes = await responseNote.json();
+
+		arrayNote = [];
+
+		for (const note in notes['Data']) {
+			if (notes['Data'][note]['NotebookID'] == ids) {
+				arrayNote.push(notes['Data'][note]);
+			}
+		}
+		$arr = arrayNote;
+		$write = notes;
 	}
+
 </script>
 
 <div class="p-2 flex mb-20 justify-center ">
@@ -111,11 +146,13 @@
 		{#each $arr.reverse() as title}
 			<div class="p-2 mt-5 group">
 				<a
-					href="notebook-{ids}"
+					href="note-{title['ID']}"
 					class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 				>
 					<!-- TODO: REMOVE NOTE FUNCTION-->
-					<button
+					<button on:click={()=>{
+						deleteNote(title["ID"]);
+					}}
 						class="hidden float-right top-0 right-0 bg-red-500 rounded-md mx-2 px-2 py-1 text-white group-hover:inline-flex"
 						>X</button
 					>
