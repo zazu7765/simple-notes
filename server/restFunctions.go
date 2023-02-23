@@ -14,7 +14,7 @@ import (
 
 // REQUEST STRUCTS
 type validatorStructs interface {
-	signupRequest | loginRequest | titleIdRequest | titleRequest | optionsWithIdRequest | idRequest | updateRequest
+	signupRequest | loginRequest | titleIdRequest | titleDescriptionRequest | optionsWithIdRequest | idRequest | updateRequest | titleDescriptionIdRequest
 }
 type signupRequest struct {
 	Name     string `json:"name" ,validate:"required"`
@@ -43,8 +43,14 @@ type titleIdRequest struct {
 type idRequest struct {
 	ID string `json:"id" validate:"required"`
 }
-type titleRequest struct {
-	Title string `validate:"required"`
+type titleDescriptionRequest struct {
+	Title       string `validate:"required"`
+	Description string
+}
+type titleDescriptionIdRequest struct {
+	ID          string `validate:"required"`
+	Title       string `validate:"required"`
+	Description string
 }
 
 // RESPONSE STRUCTS
@@ -733,7 +739,7 @@ func updateNotebook(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	req := new(titleIdRequest)
+	req := new(titleDescriptionIdRequest)
 	if err := c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
@@ -760,6 +766,9 @@ func updateNotebook(c *fiber.Ctx) error {
 	if len(req.Title) > 0 {
 		notebook.Title = req.Title
 	}
+	if len(req.Description) > 0 {
+		notebook.Description = req.Description
+	}
 	db.Save(&notebook)
 	return c.JSON(fiber.Map{
 		"Status":  "success",
@@ -777,7 +786,7 @@ func createNotebook(c *fiber.Ctx) error {
 			"Data":    err,
 		})
 	}
-	req := new(titleRequest)
+	req := new(titleDescriptionRequest)
 	if err = c.BodyParser(req); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  "error",
@@ -808,7 +817,8 @@ func createNotebook(c *fiber.Ctx) error {
 		})
 	}
 	err = db.Model(&retrievedUser).Association("Notebooks").Append(&Notebook{
-		Title: req.Title,
+		Title:       req.Title,
+		Description: req.Description,
 	})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
