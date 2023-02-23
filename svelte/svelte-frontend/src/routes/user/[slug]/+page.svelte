@@ -142,9 +142,9 @@ z-50 inline-flex  items-center p-6 mt-2 ml-3 text-sm text-gray-500 rounded-lg ho
 			<div class="min-h-screen" >
 
 				{#each arr as name, index}
-				<li>
+
 					<NoteBook content = {name[1]} />
-				</li>
+
 			{/each}
 				</div>
 		</div>
