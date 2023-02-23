@@ -26,6 +26,7 @@ export async function load({ locals, params }) {
 		throw redirect(302, '/logout');
 	 }
 	return {
+		token: locals.token,
 		name: locals.user,
 		response: responseJ,
 		responseNote: responseNoteJ,

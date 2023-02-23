@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	jwtware "github.com/gofiber/jwt/v3"
 	"gorm.io/gorm"
 )
@@ -29,9 +31,11 @@ var (
 	}()
 	app      = fiber.New()
 	validate = validator.New()
+	
 )
 
 func main() {
+	app.Use(cors.New())
 	fmt.Println(fmt.Sprintln("Connected to", config.host, "as", config.user))
 
 	app.Get("/", getDefault)

@@ -5,7 +5,10 @@
 	import { browser } from '$app/environment';
 	import { onDestroy } from 'svelte';
 	import NoteBook from '../../../lib/notes.svelte';
+	import AllNotes from "../../../lib/allNotes.svelte";
+	
 
+ 
 	import { quill } from 'svelte-quill';
 
 	let options = { placeholder: 'Write something from outside...' };
@@ -53,6 +56,8 @@
 			openNav();
 		}
 	}
+let selected = '';
+let mode = 'notebook';
 </script>
 
 <!-- <svelte:window bind:innerWidth={screenWidth} />
@@ -173,11 +178,34 @@
 		closeNav();
 	}}
 >
-	<div class="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 {pointer}">
-		<NoteBook content={"+"}/>
+	<div class="{pointer}">
+	{#if mode == "notebook"}
+		
+	
+		<NoteBook id=0 content={"+"}/>
 		{#each arr as name, index}
-			<NoteBook content={name[1]} />
+		<button on:click={()=>{
+			selected = name[0];
+			mode = "notes";
+		}}>
+			<NoteBook id={name[0]} content={name[1] }/>
+		</button>
 		{/each}
+		{/if}
+
+		{#if mode=="notes"}
+		
+			
+
+		<button on:click={()=>{
+			selected = "0";
+			mode = "notebook";
+		}}>go back</button>
+		{#key $write}
+		<AllNotes token = {data.token} ids = {selected}/>
+		{/key}
+{/if}
+
 	</div>
 </div>
 
