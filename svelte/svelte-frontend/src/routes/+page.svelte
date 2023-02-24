@@ -1,18 +1,18 @@
 <script>
 	import { afterUpdate } from 'svelte';
 	import { onMount } from 'svelte';
-	//   onMount(() => {
-	//     document.requestStorageAccess().then(
-	//   () => { console.log('access granted') },
-	//   () => { console.log('access denied') }
-	// );
+	  onMount(() => {
+		window.sessionStorage.setItem('store', $storage);
+	window.sessionStorage.setItem('id', $state);
+
+	  });
 
 	//    });
 	import { invalidate } from '$app/navigation';
 	import NavBar from '../lib/NavBar.svelte';
 	import { storage, state } from '$lib/notes';
-	window.sessionStorage.setItem('store', $storage);
-	window.sessionStorage.setItem('id', $state);
+	
+
 
 	/** @type {import('./$types').PageData} */
 	export let data;
