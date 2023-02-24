@@ -8,44 +8,39 @@
 	import AllNotes from '../../../lib/allNotes.svelte';
 
 	import { quill } from 'svelte-quill';
+	import { writable, type Writable } from 'svelte/store';
 
 	let options = { placeholder: 'Write something from outside...' };
-	let savestore = false
+	let savestore = false;
 	let contentEdit = { html: '', text: '' };
 	let ses;
 	let id;
-	if ($storage&&savestore) {
-			window.sessionStorage.setItem('store', $storage);
-			window.sessionStorage.setItem('id', $state);
-		}
+	export let data: any;
+	let pp;
+	$write = data['responseNote'];
+
+	if ($storage && savestore) {
+		window.sessionStorage.setItem('store', $storage);
+		window.sessionStorage.setItem('id', $state);
+	}
 	onMount(async () => {
-	
 		ses = window.sessionStorage.getItem('store');
 		id = window.sessionStorage.getItem('id');
-		savestore = true
+		savestore = true;
 	});
-	export let data: any;
-	let login = data.bool;
-	$write = data['responseNote'];
-	let pp;
+
 	write.subscribe((value) => {
 		pp = value;
 	});
-	console.log(pp['Data'] + ' note');
-	// console.log(data['responseNote'])
 
-	let num = 5;
-	console.log(data);
 	let content = data['response']['Data'];
-	let arr: Array<string>[] = [];
+	let arrS = writable(['']);
+	let arr: string[] = [];
 	for (const item in content) {
 		arr.push([content[item]['ID'], content[item]['Title']]);
 	}
-	console.log(arr);
-	console.log(ses);
-	let go = () => {
-		throw redirect(302, '/login');
-	};
+	$arrS = arr;
+
 	let ww = 'w-0';
 	let blur = '';
 	let pointer = '';
@@ -59,15 +54,41 @@
 		blur = '';
 		pointer = '';
 	}
-	let screenWidth;
+
 	if (browser) {
 		innerWidth = window.innerWidth;
 		if (innerWidth < 375) {
 			openNav();
 		}
 	}
-	let selected = '';
-	let mode = 'notebook';
+
+	$: addNoteBook = async () => {
+		const formData = new FormData();
+		formData.append('id', arr[0]['UserID']);
+		formData.append('Title', valueText);
+		const response = await fetch('http://localhost:81/notebooks', {
+			method: 'POST',
+			body: formData,
+			headers: {
+				Authorization: 'Bearer ' + data.token
+			}
+		});
+		const responseAll = await fetch('http://localhost:81/notebooks/all', {
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer ' + data.token,
+				'Content-Type': 'application/json'
+			}
+		});
+		let content2 = await responseAll.json();
+		let lengthA = content2['Data'].length - 1;
+		console.log(content2['Data'][lengthA]['ID']);
+
+		arr.push([content2['Data'][lengthA]['ID'], content2['Data'][lengthA]['Title']]);
+
+		$arrS = arr;
+	};
+	let valueText = 'New Notebook!';
 </script>
 
 <!-- <svelte:window bind:innerWidth={screenWidth} />
@@ -145,7 +166,7 @@
 				</li>
 				<ul class="pt-4 mt-4 space-y-2 border-t border-gray-500 dark:border-gray-700" />
 
-				{#each arr as name, index}
+				{#each $arrS.reverse() as name}
 					<li>
 						<Sidebar {name} />
 					</li>
@@ -190,52 +211,83 @@
 >
 	<div class={pointer}>
 		{#if ses == 'notebook'}
-		<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
-			<NoteBook id="0" content={'+'} />
-			{#each arr as name, index}
+			<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
+				<div class="mt-5 ">
+					<div
+						href="notebook-0"
+						class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+					>
+						<div class="pointer-events-auto">
+							<input
+								bind:value={valueText}
+								class="relative block w-full appearance-none rounded  border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+								placeholder="Add a new note!"
+							/>
+						</div>
+
+						<button
+					on:click={() => {
+						addNoteBook();
+					}}
+					class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+				>
+					+
+				</button>
+
+						<p class="font-normal text-gray-700 dark:text-gray-400 pointer-events-auto">
+							Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse
+							chronological order.
+						</p>
+					</div>
+					<div>
+				
+					</div>
+				</div>
+
+				{#each $arrS.reverse() as name}
+					<button
+						on:click={() => {
+							$state = name[0];
+
+							$storage = 'notes';
+							$: if ($storage) {
+								window.sessionStorage.setItem('store', $storage);
+							}
+							ses = $storage;
+
+							$: if ($state) {
+								window.sessionStorage.setItem('id', $state);
+							}
+							id = $state;
+						}}
+					>
+						<NoteBook id={name[0]} content={name[1]} />
+					</button>
+				{/each}
+			</div>
+		{/if}
+
+		{#if ses == 'notes'}
+			<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
 				<button
 					on:click={() => {
-						$state = name[0];
+						$state = '0';
 
-						$storage = 'notes';
+						$storage = 'notebook';
 						$: if ($storage) {
 							window.sessionStorage.setItem('store', $storage);
 						}
 						ses = $storage;
-
-					$: if ($state) {
-						window.sessionStorage.setItem('id', $state);
-					}
-					id = $state;
-					}}
+						$: if ($state) {
+							window.sessionStorage.setItem('id', $state);
+						}
+						id = $state;
+					}}>go back</button
 				>
-					<NoteBook id={name[0]} content={name[1]} />
-				</button>
-			{/each}
-		</div>
-		{/if}
-
-		{#if ses == 'notes'}
-		<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
-			<button
-				on:click={() => {
-					$state = '0';
-
-					$storage = 'notebook';
-					$: if ($storage) {
-						window.sessionStorage.setItem('store', $storage);
-					}
-					ses = $storage;
-					$: if ($state) {
-						window.sessionStorage.setItem('id', $state);
-					}
-					id = $state;
-				}}>go back</button
-			>
-			{#key $write}
-				<AllNotes token={data.token} ids={id} />
-			{/key}
-		</div>
+				{#key $write}
+					<AllNotes token={data.token} ids={id} />
+				{/key}
+			</div>
 		{/if}
 	</div>
 </div>

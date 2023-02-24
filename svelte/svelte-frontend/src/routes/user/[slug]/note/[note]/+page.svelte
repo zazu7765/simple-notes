@@ -55,8 +55,37 @@
     onDestroy(async () => {
         text = quillE.getText(0, quillE.getLength()-1);
         console.log(text);
-        
+        const formData = new FormData();
+		formData.append('id', dataNote["Data"]["ID"]);
+		formData.append('Content', text);
+		const response = await fetch('http://localhost:81/notes', {
+			method: 'PUT',
+			body: formData,
+			headers: {
+				Authorization: 'Bearer ' + data.token
+			}
+		});
+
     })
+    let typingTimer;                //timer identifier
+let doneTypingInterval = 5000; 
+	async function doneTyping(){
+    console.log("doneTyping");
+    text = quillE.getText(0, quillE.getLength()-1);
+        console.log(text);
+        const formData = new FormData();
+		formData.append('id', dataNote["Data"]["ID"]);
+		formData.append('Content', text);
+		const response = await fetch('http://localhost:81/notes', {
+			method: 'PUT',
+			body: formData,
+			headers: {
+				Authorization: 'Bearer ' + data.token
+			}
+		});
+   
+
+}
 </script>
 
 <button
@@ -257,7 +286,10 @@
 
 		/> -->
 		<div class="editor-wrapper h-screen">
-			<div bind:this={editor} />
+			<div bind:this={editor} on:keydown={()=>{
+                clearTimeout(typingTimer);
+                 typingTimer = setTimeout(doneTyping, doneTypingInterval);}
+            }/>
 		</div>
 	</div>
 </div>
