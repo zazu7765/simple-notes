@@ -69,7 +69,7 @@ func main() {
 		SigningKey: []byte("bananas"),
 	}))
 
-	notes.Get("/", getNote)
+	notes.Post("/", getNote)
 	notes.Get("/all", getAllNotes)
 	notes.Post("/", createNote)
 	notes.Put("/", updateNote)

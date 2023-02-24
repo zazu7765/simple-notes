@@ -1,10 +1,12 @@
 <script lang="ts">
-	import { storage, write } from './notes';
+	import { storage, write, currentNote } from './notes';
 	import { writable } from 'svelte/store';
 	import { redirect } from '@sveltejs/kit';
 	export let ids: string;
 	export let token: string;
 	let notes;
+
+
 
 	write.subscribe((value) => {
 		notes = value;
@@ -145,15 +147,18 @@
 	<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
 		{#each $arr.reverse() as title}
 			<div class="p-2 mt-5 group">
-				<a
-					href="note-{title['ID']}"
+				<a	on:click={()=>{
+					$currentNote = [title["ID"], token];
+				}}
+					href="notebook-{ids}/note/{title['ID']}"
 					class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 				>
 					<!-- TODO: REMOVE NOTE FUNCTION-->
 					<button on:click={()=>{
 						deleteNote(title["ID"]);
+						
 					}}
-						class="hidden float-right top-0 right-0 bg-red-500 rounded-md mx-2 px-2 py-1 text-white group-hover:inline-flex"
+						class="hidden float-right top-0 right-0 p-5 z-10 bg-red-500 rounded-md mx-2 px-2 py-1 text-white group-hover:inline-flex"
 						>X</button
 					>
 					<h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
