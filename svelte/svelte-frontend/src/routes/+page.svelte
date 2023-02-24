@@ -1,6 +1,6 @@
 <script>
 	import { afterUpdate } from 'svelte';
-		import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 	//   onMount(() => {
 	//     document.requestStorageAccess().then(
 	//   () => { console.log('access granted') },
@@ -8,17 +8,18 @@
 	// );
 
 	//    });
-  import { invalidate } from "$app/navigation";
+	import { invalidate } from '$app/navigation';
 	import NavBar from '../lib/NavBar.svelte';
+	import { storage, state } from '$lib/notes';
+	window.sessionStorage.setItem('store', $storage);
+	window.sessionStorage.setItem('id', $state);
 
 	/** @type {import('./$types').PageData} */
 	export let data;
 	console.log(data.user.bool + 'wwwww');
-  let login = data.user.bool;
+	let login = data.user.bool;
 
 	// 	import { onMount } from "svelte";
-
-	
 </script>
 
 {#key login}
@@ -43,5 +44,4 @@
 </div>
 
 <style>
-
 </style>
