@@ -6,8 +6,6 @@
 	export let token: string;
 	let notes;
 
-
-
 	write.subscribe((value) => {
 		notes = value;
 	});
@@ -27,7 +25,7 @@
 		const formData = new FormData();
 		formData.append('id', ids);
 		formData.append('Title', valueText);
-		const response = await fetch('http://localhost:81/notes', {
+		const response = await fetch('http://localhost:81/notes/create', {
 			method: 'POST',
 			body: formData,
 			headers: {
@@ -70,21 +68,19 @@
 		}
 	}
 
-	$: deleteNote = async (noteId: string)=>{
+	$: deleteNote = async (noteId: string) => {
 		const formData = new FormData();
-			formData.append('id', noteId);
+		formData.append('id', noteId);
 		const deleteNote = await fetch('http://localhost:81/notes/', {
-			
 			method: 'DELETE',
 			body: formData,
 			headers: {
-				Authorization: 'Bearer ' + token,
-
+				Authorization: 'Bearer ' + token
 			}
 		});
-		let data = await deleteNote.json()
-		if (data["Status"]=="error") {
-			throw redirect(302, "/logout") 
+		let data = await deleteNote.json();
+		if (data['Status'] == 'error') {
+			throw redirect(302, '/logout');
 		}
 		const responseNote = await fetch('http://localhost:81/notes/all', {
 			method: 'GET',
@@ -104,14 +100,14 @@
 		}
 		$arr = arrayNote;
 		$write = notes;
-	}
-
+	};
 </script>
 
 <div class="p-2 flex mb-20 justify-center ">
-	<button on:click={()=>{
-		stateChanged();
-	}}
+	<button
+		on:click={() => {
+			stateChanged();
+		}}
 		><div
 			class="absolute bg-green-500 z-10  grid mt-7  max-w-sm p-2 w-10 text-white hover:bg-green-600 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 		>
@@ -128,47 +124,63 @@
 				placeholder="Add a new note!"
 			/>
 		</div>
-		<div >
+		<div>
 			<button
 				class="bg-blue-500 rounded-md px-3 py-2 text-white"
 				on:click={() => {
 					addNote();
 					stateChanged();
+
 				}}
 				on:keydown={() => {
 					addNote();
 					stateChanged();
+	
 				}}>+</button
 			>
 		</div>
 	</div>
 </div>
 {#key $arr}
-	<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
+	
 		{#each $arr.reverse() as title}
-			<div class="p-2 mt-5 group">
-				<a	on:click={()=>{
-					$currentNote = [title["ID"], token];
-				}}
+			<div class="p-2 mt-5 groupg grid grid-cols-2">
+				<div class="">
+				<a
+					on:click={() => {
+						$currentNote = [title['ID'], token];
+					}}
 					href="notebook-{ids}/note/{title['ID']}"
 					class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 				>
 					<!-- TODO: REMOVE NOTE FUNCTION-->
-					<button on:click={()=>{
-						deleteNote(title["ID"]);
-						
-					}}
-						class="hidden float-right top-0 right-0 p-5 z-10 bg-red-500 rounded-md mx-2 px-2 py-1 text-white group-hover:inline-flex"
-						>X</button
-					>
+			
 					<h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
 						{title['Title']}
 					</h5>
 					<p class="font-normal text-gray-700 dark:text-gray-400">
-						{title['Content']}
+						{title['Content']}...
 					</p>
 				</a>
+				</div>
+
+			
+			 <div 	on:click={() => {
+				deleteNote(title['ID']);
+			}}
+			on:keyup={() => {	
+				deleteNote(title['ID']);
+			}}
+			class="place-self-start float-right top-0 right-0  z-10 bg-red-500 mx-2 px-2 py-1 text-white group-hover:inline-flex  max-w-sm p-6 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">		 
+				 <button 
+				on:click={() => {
+					deleteNote(title['ID']);
+				}}
+				class="justify-center "
+				>X</button>
+			 </div>
+			
 			</div>
 		{/each}
-	</div>
+
 {/key}

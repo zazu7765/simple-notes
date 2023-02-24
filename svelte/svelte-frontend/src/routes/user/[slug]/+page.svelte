@@ -1,20 +1,29 @@
 <script module lang="ts">
 	import { redirect } from '@sveltejs/kit';
 	import Sidebar from '../../../lib/Sidebar.svelte';
-	import { write } from '../../../lib/notes';
+	import { write, storage, state } from '../../../lib/notes';
 	import { browser } from '$app/environment';
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import NoteBook from '../../../lib/notes.svelte';
-	import AllNotes from "../../../lib/allNotes.svelte";
-	
+	import AllNotes from '../../../lib/allNotes.svelte';
 
- 
 	import { quill } from 'svelte-quill';
 
 	let options = { placeholder: 'Write something from outside...' };
-
+	let savestore = false
 	let contentEdit = { html: '', text: '' };
-	onDestroy(() => {});
+	let ses;
+	let id;
+	if ($storage&&savestore) {
+			window.sessionStorage.setItem('store', $storage);
+			window.sessionStorage.setItem('id', $state);
+		}
+	onMount(async () => {
+	
+		ses = window.sessionStorage.getItem('store');
+		id = window.sessionStorage.getItem('id');
+		savestore = true
+	});
 	export let data: any;
 	let login = data.bool;
 	$write = data['responseNote'];
@@ -33,6 +42,7 @@
 		arr.push([content[item]['ID'], content[item]['Title']]);
 	}
 	console.log(arr);
+	console.log(ses);
 	let go = () => {
 		throw redirect(302, '/login');
 	};
@@ -56,8 +66,8 @@
 			openNav();
 		}
 	}
-let selected = '';
-let mode = 'notebook';
+	let selected = '';
+	let mode = 'notebook';
 </script>
 
 <!-- <svelte:window bind:innerWidth={screenWidth} />
@@ -178,37 +188,57 @@ let mode = 'notebook';
 		closeNav();
 	}}
 >
-	<div class="{pointer}">
-	{#if mode == "notebook"}
-		
-	
-		<NoteBook id=0 content={"+"}/>
-		{#each arr as name, index}
-		<button on:click={()=>{
-			selected = name[0];
-			mode = "notes";
-		}}>
-			<NoteBook id={name[0]} content={name[1] }/>
-		</button>
-		{/each}
+	<div class={pointer}>
+		{#if ses == 'notebook'}
+		<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
+			<NoteBook id="0" content={'+'} />
+			{#each arr as name, index}
+				<button
+					on:click={() => {
+						$state = name[0];
+
+						$storage = 'notes';
+						$: if ($storage) {
+							window.sessionStorage.setItem('store', $storage);
+						}
+						ses = $storage;
+
+					$: if ($state) {
+						window.sessionStorage.setItem('id', $state);
+					}
+					id = $state;
+					}}
+				>
+					<NoteBook id={name[0]} content={name[1]} />
+				</button>
+			{/each}
+		</div>
 		{/if}
 
-		{#if mode=="notes"}
-		
-			
+		{#if ses == 'notes'}
+		<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
+			<button
+				on:click={() => {
+					$state = '0';
 
-		<button on:click={()=>{
-			selected = "0";
-			mode = "notebook";
-		}}>go back</button>
-		{#key $write}
-		<AllNotes token = {data.token} ids = {selected}/>
-		{/key}
-{/if}
-
+					$storage = 'notebook';
+					$: if ($storage) {
+						window.sessionStorage.setItem('store', $storage);
+					}
+					ses = $storage;
+					$: if ($state) {
+						window.sessionStorage.setItem('id', $state);
+					}
+					id = $state;
+				}}>go back</button
+			>
+			{#key $write}
+				<AllNotes token={data.token} ids={id} />
+			{/key}
+		</div>
+		{/if}
 	</div>
 </div>
-
 
 <style>
 </style>

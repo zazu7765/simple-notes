@@ -71,7 +71,7 @@ func main() {
 
 	notes.Post("/", getNote)
 	notes.Get("/all", getAllNotes)
-	notes.Post("/", createNote)
+	notes.Post("/create", createNote)
 	notes.Put("/", updateNote)
 	notes.Delete("/", deleteNote)
 

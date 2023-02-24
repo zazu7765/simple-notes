@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
     import {page } from '$app/stores';
+
 	import { quill } from 'svelte-quill';
-	import { currentNote } from '$lib/notes';
+	import { currentNote, storage } from '$lib/notes';
 	import { redirect } from '@sveltejs/kit';
 
 	let editor;
@@ -13,6 +14,7 @@
 		[{ align: [] }],
 		['clean']
 	];
+
 	let options = { placeholder: 'Write something from outside...' };
 
 	let content = { html: '', text: '' };
@@ -24,10 +26,14 @@
 	// if (noteId[0] == '0') {
 	// 	throw redirect(303, '/logout');
 	// }
+    $storage = "notes"
+    var text;
 	onDestroy(() => {});
 	// export let data: any;
 	export let data : any;
+
     let dataNote = data.notes
+    let quillE:any;
 	onMount(async () => {
 
     console.log($page.params.note);
@@ -35,15 +41,22 @@
 		console.log(dataNote['Data']['Content']);
 		const { default: Quill } = await import('quill');
 
-		let quill = new Quill(editor, {
+		 quillE = new Quill(editor, {
 			modules: {
 				toolbar: toolbarOptions
 			},
 			theme: 'snow',
 			placeholder: 'Write your story...'
 		});
-		quill.setContents([{ insert: dataNote['Data']['Content'] }, { insert: '\n' }]);
+		quillE.setContents([{ insert: dataNote['Data']['Content'] }, { insert: '\n' }]);
+        
 	});
+    
+    onDestroy(async () => {
+        text = quillE.getText(0, quillE.getLength()-1);
+        console.log(text);
+        
+    })
 </script>
 
 <button

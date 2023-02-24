@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-
+import { storage  } from '$lib/notes';
 export async function load({ locals, params }) {
 
 
@@ -34,6 +34,9 @@ export async function load({ locals, params }) {
 			Authorization: 'Bearer ' + locals.token
 		}
 	});
+
+
+
 	return {
 		token: locals.token,
 		name: locals.user,
