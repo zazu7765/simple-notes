@@ -39,7 +39,7 @@
           p-16
         "
 	>
-		<h1 class="text-2xl font-medium">I love taking notes</h1>
+		<h1 class="text-2xl py-5 my-4 block px-5 bg-gray-200 rounded-md text-slate-700 font-medium">I love taking notes🗒️...</h1>
 	</div>
 </div>
 

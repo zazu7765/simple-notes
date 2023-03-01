@@ -35,14 +35,14 @@
             md:py-0
             px-4
             text-lg text-gray-700
-            bg-white
-			border-b-2 border-gray-200
+
+			
 
           "
 			>
-				<div class=" h-15 w-12 object-contain">
+				<div class=" md:p-4 py-2 my-4 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700 object-contain">
 					<a href="/">
-					<img src='./icon.jpg' class="object-contain">
+					Simple notes
 					</a>
 				</div>
 
@@ -81,21 +81,21 @@
 					>
 						{#if !login}
 							<li>
-								<a class="md:p-4 py-2 block hover:text-purple-400" href="/login">Login</a>
+								<a class="md:p-4 py-2 my-2 mr-3 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/login">Login</a>
 							</li>
 							<li>
-								<a class="md:p-4 py-2 block hover:text-purple-400 text-purple-500" href="/sign"
+								<a class="md:p-4 py-2 my-2 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/sign"
 									>Sign Up</a
 								>
 							</li>
 						{:else}
 							<li>
-								<a class="md:p-4 py-2 block hover:text-purple-400 text-purple-500" href="/test"
-									>Open Notes</a
+								<a  class="md:p-4 py-2 my-4 block mr-3 px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/user/notebooks"
+									>Open Dashboard</a
 								>
               </li>
               <li>
-								<a class="md:p-4 py-2 block hover:text-purple-400 text-purple-500" href="/logout"
+								<a class= "md:p-4 py-2 my-4 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/logout"
 									>Logout</a
 								>
 							</li>
