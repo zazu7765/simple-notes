@@ -159,7 +159,7 @@
 						{title['Title']}
 					</h5>
 					<p class="font-normal text-gray-700 dark:text-gray-400">
-						{title['Content'].slice(0,40)}...
+						{title['Content'].slice(0,25)}...
 					</p>
 				</a>
 			</div>
