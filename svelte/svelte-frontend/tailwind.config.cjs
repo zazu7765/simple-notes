@@ -6,7 +6,9 @@ module.exports = {
   ],
   
   theme: {
-    extend: { backgroundColor: ['active'],},
+    extend: { backgroundColor: ['active'],
+    
+  },
     screens: {
       'sm': '640px',
       // => @media (min-width: 640px) { ... }

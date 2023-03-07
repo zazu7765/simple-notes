@@ -1,4 +1,5 @@
 <script>
+	import Footer from "$lib/Footer.svelte"
 	import { afterUpdate } from 'svelte';
 	import { onMount } from 'svelte';
 	  onMount(() => {
@@ -25,23 +26,35 @@
 {#key login}
 	<NavBar {login} />
 {/key}
-<div class="px-4">
+<div class="px-4 min-h-screen">
 	<div
 		class="
-          flex
+          grid
           justify-center
           items-center
-          bg-white
+		  content-center 
           mx-auto
           max-w-2xl
           rounded-lg
-          my-16
-          p-16
+          mt-16
+          
         "
 	>
-		<h1 class="text-2xl py-5 my-4 block px-5 bg-gray-200 rounded-md text-slate-700 font-medium">I love taking notes🗒️...</h1>
+		<h1 class="lg:text-2xl sm:text-xl py-2 my-4 block px-5 text-center rounded-md text-slate-1000 font-medium"><b>Take notes with Simple Notes</b><br>
+			<p class="text-base mt-3">Organize, manage and always be ahead of your schdule.</p>
+		</h1>
+		
 	</div>
+	
+	<footer class="bottom-0" >
+		
+		</footer>
+		<div class="sticky top-[95vh]"><Footer></Footer></div>
 </div>
 
+
 <style>
+	:global(body){
+		background-color: #ECF2FF;
+	}
 </style>

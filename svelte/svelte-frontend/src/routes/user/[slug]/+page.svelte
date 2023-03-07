@@ -7,7 +7,7 @@
 	import NoteBook from '../../../lib/notes.svelte';
 	import AllNotes from '../../../lib/allNotes.svelte';
 
-	import { quill } from 'svelte-quill';
+
 	import { writable, type Writable } from 'svelte/store';
 
 	let options = { placeholder: 'Write something from outside...' };
@@ -18,6 +18,9 @@
 	export let data: any;
 	let pp;
 	$write = data['responseNote'];
+	import { navigating } from '$app/stores'
+// Example spinner/loading component is visible (when $navigating != null):
+
 
 	if ($storage && savestore) {
 		window.sessionStorage.setItem('store', $storage);
@@ -199,6 +202,8 @@
 		</ul>
 	</div>
 </aside>
+{#if !$navigating}
+	
 
 <div
 	class="min-h-screen p-4 {blur} inset-0"
@@ -291,6 +296,8 @@
 		{/if}
 	</div>
 </div>
-
+{:else}
+<div>wating</div>
+{/if}
 <style>
 </style>

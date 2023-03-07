@@ -8,7 +8,7 @@
 	let menu = 'hidden';
 	export let login: boolean;
 
-
+		let hid = "hidder";
 	
 
 	// });
@@ -25,13 +25,14 @@
 		<header>
 			<nav
 				class="
-
+				
+			bg-[#]
           fixed-top
             flex flex-wrap
             items-center
             justify-between
             w-full
-            py-4
+            
             md:py-0
             px-4
             text-lg text-gray-700
@@ -40,9 +41,9 @@
 
           "
 			>
-				<div class=" md:p-4 py-2 my-4 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700 object-contain">
+				<div class="link  md:p-2 my-4 block] rounded-md  text-slate-900 object-contain">
 					<a href="/">
-					Simple notes
+					<b>SIMPLE NOTES</b>
 					</a>
 				</div>
 
@@ -73,7 +74,7 @@
 				<div class="{menu} w-full md:flex md:items-center md:w-auto" id="menu">
 					<ul
 						class="
-                pt-4
+                pt-1
                 text-base text-gray-700
                 md:flex
                 md:justify-between 
@@ -81,23 +82,25 @@
 					>
 						{#if !login}
 							<li>
-								<a class="md:p-4 py-2 my-2 mr-3 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/login">Login</a>
+								<a class="md:px-4 py-1 my-1 mr-3 block hover:border-b-2 border-2 px-4 border-slate-500 rounded-md  text-slate-800" href="/login"><b>Login</b></a>
 							</li>
-							<li>
-								<a class="md:p-4 py-2 my-2 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/sign"
-									>Sign Up</a
-								>
-							</li>
+							<!-- <li> -->
+								<!-- <a  class="md:p-4 py-2 my-2 block hover:border-b-2  px-2 bg-[#E9A178]  rounded-md  text-slate-100" href="/sign"
+									><b>Sign Up</b></a
+								> -->
+							<!-- </li> -->
 						{:else}
 							<li>
-								<a  class="md:p-4 py-2 my-4 block mr-3 px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/user/notebooks"
-									>Open Dashboard</a
+								<a  class="md:p-4 py-2 my-4 block hover:border-b-2 mr-3  px-2 bg-[#E9A178] rounded-md  text-slate-100" href="/user/notebooks"
+									><b>Open Dashboard</b></a
 								>
               </li>
               <li>
-								<a class= "md:p-4 py-2 my-4 block px-2 bg-gray-200 rounded-md hover:text-slate-500 text-slate-700" href="/logout"
-									>Logout</a
+			
+								<a class= "md:p-4 py-2 my-4 block  px-2  bg-[#E9A178] rounded-md  text-slate-100" href="/logout"
+									><b>Logout</b></a
 								>
+
 							</li>
 						{/if}
 					</ul>
@@ -108,5 +111,38 @@
 </div>
 
 <style>
+:global(body){
+	background-color: #ECF2FF;
+}
+
+    .link {
+  position: relative;
+}
+.link:after {
+  content: '';
+  position: absolute;
+  bottom: -.4em;
+  left: 50%;
+  right: 50%;
+  height: 1px;
+  background: currentColor;
+  -webkit-transition: all ease .2s;
+  transition: all ease .2s;
+}
+.link:hover:after {
+  left: 0;
+  right: 0;
+  height: 2px;
+}
+.link:before {
+  position: absolute;
+  -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
+  left: -10px;
+  color: #eee;
+  opacity: .3;
+  font-weight: 100;
+  font-size: .8em;
+}
 
 </style>
