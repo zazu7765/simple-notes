@@ -27,12 +27,18 @@ export const actions = {
 		let dataPost;
 		try {
 			dataPost = await response.json();
-			console.log(dataPost['Data']);
 		} catch (error) {
-			console.log(error);
+			
 			return {
-				success: false
+				success: false,
+				message: dataPost['Data']
 			};
+		}
+		if (dataPost['Status'] == 'error') {
+			return {
+				success: false,
+				message: dataPost['Data']
+			}
 		}
 		//   let parsed = JSON.parse(total);
 		//   console.log(dataPost['token']);

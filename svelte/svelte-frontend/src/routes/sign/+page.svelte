@@ -1,6 +1,10 @@
 <script lang="ts">
 	import NavBar from '../../lib/NavBar.svelte';
 	let login = false;
+	export let form;
+	if(form){
+	console.log(form.success+" logged in");
+	}
 </script>
 
 <div>
@@ -100,6 +104,11 @@
 					</span>
 					Sign Up
 				</button>
+				{#if form}
+				{#if form.success == false}
+				<p class="mt-2 text-sm text-red-600 dark:text-red-500"><span class="font-medium">Oh, snapp!</span> {form.message}</p>
+				{/if}
+				{/if}
 			</div>
 		</form>
 	</div>

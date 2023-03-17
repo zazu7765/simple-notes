@@ -4,6 +4,12 @@ module.exports = {
     "./src/**/*.{html,js,svelte,ts}",
     "./node_modules/flowbite-svelte/**/*.{html,js,svelte,ts}",
   ],
+  modules: {
+    shadows: ['responsive', 'hover', 'focus', 'hover-hover', 'hover-none'],
+},
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   
   theme: {
     extend: { backgroundColor: ['active'],
@@ -26,7 +32,8 @@ module.exports = {
       // => @media (min-width: 1536px) { ... }
     }
   },
-  plugins: [require('flowbite/plugin')],
+  plugins: [require('flowbite/plugin'),
+  require('tailwindcss-touch')()],
 
   darkMode: 'class',
 }

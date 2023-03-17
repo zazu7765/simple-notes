@@ -34,8 +34,10 @@ export async function load({ locals, params }) {
 			Authorization: 'Bearer ' + locals.token
 		}
 	});
-
-
+	const datanote = await responseNotes.json()
+	if (datanote['Status'] == 'error') {
+		throw redirect(302, '/logout');
+	}
 
 	return {
 		token: locals.token,
@@ -43,6 +45,6 @@ export async function load({ locals, params }) {
 		response: responseJ,
 		responseNote: responseNoteJ,
 		bool: login,
-		notes: await responseNotes.json()
+		notes: datanote
 	};
 }

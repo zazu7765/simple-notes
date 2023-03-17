@@ -28,7 +28,7 @@
 	// }
     $storage = "notes"
     var text;
-	onDestroy(() => {});
+
 	// export let data: any;
 	export let data : any;
 
@@ -37,7 +37,7 @@
 	onMount(async () => {
 
     console.log($page.params.note);
-  
+	console.log(dataNote['Data'])
 		console.log(dataNote['Data']['Content']);
 		const { default: Quill } = await import('quill');
 
@@ -53,20 +53,20 @@
 
 	});
     
-    onDestroy(async () => {
+    // onDestroy(async () => {
 
-        const formData = new FormData();
-		formData.append('id', dataNote["Data"]["ID"]);
-		formData.append('Content', content);
-		const response = await fetch('http://localhost:81/notes', {
-			method: 'PUT',
-			body: formData,
-			headers: {
-				Authorization: 'Bearer ' + data.token
-			}
-		});
-		console.log(content+" hamid");
-    })
+    //     const formData = new FormData();
+	// 	formData.append('id', dataNote["Data"]["ID"]);
+	// 	formData.append('Content', content);
+	// 	const response = await fetch('http://localhost:81/notes', {
+	// 		method: 'PUT',
+	// 		body: formData,
+	// 		headers: {
+	// 			Authorization: 'Bearer ' + data.token
+	// 		}
+	// 	});
+	// 	console.log(content+" hamid");
+    // })
 
     let typingTimer;                //timer identifier
 let doneTypingInterval = 5000; 
@@ -87,6 +87,15 @@ $: doneTyping= async() => {
 	
    
 
+
+}
+let timer;
+function startTimer() {
+  timer = setTimeout(function() {
+    console.log("No user input detected.");
+	doneTyping() 
+  }, 5000);
+  // Set the timeout to 5 seconds (5000 milliseconds)
 }
 </script>
 
@@ -97,8 +106,9 @@ $: doneTyping= async() => {
 
 		<div class="editor-wrapper editor h-screen">
 			<div bind:this={editor} on:keydown={()=>{
-
-					doneTyping()
+					  clearTimeout(timer);
+  						startTimer();	
+						
             }} bind:textContent={content}  contenteditable  />
 		
 		</div>

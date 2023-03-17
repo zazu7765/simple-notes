@@ -7,7 +7,6 @@
 	import NoteBook from '../../../lib/notes.svelte';
 	import AllNotes from '../../../lib/allNotes.svelte';
 
-
 	import { writable, type Writable } from 'svelte/store';
 
 	let options = { placeholder: 'Write something from outside...' };
@@ -17,10 +16,11 @@
 	let id;
 	export let data: any;
 	let pp;
+	let valueText2: String = 'Make a new notebook!';
 	$write = data['responseNote'];
-	import { navigating } from '$app/stores'
-// Example spinner/loading component is visible (when $navigating != null):
+	import { navigating } from '$app/stores';
 
+	// Example spinner/loading component is visible (when $navigating != null):
 
 	if ($storage && savestore) {
 		window.sessionStorage.setItem('store', $storage);
@@ -40,22 +40,25 @@
 	let arrS = writable(['']);
 	let arr: string[] = [];
 	for (const item in content) {
-		arr.push([content[item]['ID'], content[item]['Title']]);
+		arr.unshift([content[item]['ID'], content[item]['Title']]);
 	}
 	$arrS = arr;
 
 	let ww = 'w-0';
 	let blur = '';
 	let pointer = '';
+	let w = ''
 	function openNav() {
 		ww = 'w-64';
 		blur = 'blur-sm';
 		pointer = 'pointer-events-none';
+		w='hidden'
 	}
 	function closeNav() {
 		ww = 'w-0';
+		w = ''
 		blur = '';
-		pointer = '';
+		pointer = 'pointer-events-auto';
 	}
 
 	if (browser) {
@@ -85,13 +88,44 @@
 		});
 		let content2 = await responseAll.json();
 		let lengthA = content2['Data'].length - 1;
-		console.log(content2['Data'][lengthA]['ID']);
+		console.log(content2['Data'][lengthA]['Title'] + 'thelas');
 
-		arr.push([content2['Data'][lengthA]['ID'], content2['Data'][lengthA]['Title']]);
+		arr.unshift([content2['Data'][lengthA]['ID'], content2['Data'][lengthA]['Title']]);
 
 		$arrS = arr;
 	};
-	let valueText = 'New Notebook!';
+	export const deleteNote = async (noteId: string) => {
+		const formData = new FormData();
+		formData.append('id', noteId);
+		const deleteNote = await fetch('http://localhost:81/notebooks/', {
+			method: 'DELETE',
+			body: formData,
+			headers: {
+				Authorization: 'Bearer ' + data.token
+			}
+		});
+		let data1 = await deleteNote.json();
+		if (data1['Status'] == 'error') {
+			throw redirect(302, '/logout');
+		}
+		const responseNote = await fetch('http://localhost:81/notebooks/all', {
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer ' + data.token,
+				'Content-Type': 'application/json'
+			}
+		});
+		let content = await responseNote.json();
+
+		let arr2 = [];
+
+		for (const item in content) {
+		arr2.unshift([content[item]['ID'], content[item]['Title']]);
+	}
+		$arrS = arr2;
+		
+	};
+	let valueText = '';
 </script>
 
 <!-- <svelte:window bind:innerWidth={screenWidth} />
@@ -125,7 +159,7 @@
 	</svg>
 </button>
 
-<aside class="ease-in-out duration-300 fixed top-0 left-0 z-40 {ww} h-screen " aria-label="Sidebar">
+<div class="ease-in-out duration-300 fixed top-0 left-0 z-40 {ww} h-screen " aria-label="Sidebar">
 	<div class="h-full py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
 		<ul class="space-y-2">
 			<button
@@ -201,103 +235,86 @@
 			</ul>
 		</ul>
 	</div>
-</aside>
-{#if !$navigating}
-	
+</div>
+{#if data}
+	<div
+		class="min-h-screen p-4 {blur}  inset-0"
+		on:keydown={() => {
+			closeNav();
+		}}
+		on:click={() => {
+			closeNav();
+		}}
+	>
+		<div class="{pointer} ">
+			{#if $storage == 'notebook'}
+				<div class=" mx-auto grid min-w-full lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2">
+					<div class=" ">
+						<div
+							href="notebook-0"
+							class=" mx-auto block max-w-sm min-w-full  border  border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+						>
+							<div class={pointer}>
+								<input
+									bind:value={valueText}
+									class="relative block w-full appearance-none rounded  border border-gray-300 py-6 px-1 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									placeholder={valueText2}
+								/>
+							</div>
 
-<div
-	class="min-h-screen p-4 {blur} inset-0"
-	on:keydown={() => {
-		closeNav();
-	}}
-	on:click={() => {
-		closeNav();
-	}}
->
-	<div class={pointer}>
-		{#if ses == 'notebook'}
-			<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
-				<div class="mt-5 ">
-					<div
-						href="notebook-0"
-						class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-					>
-						<div class="pointer-events-auto">
-							<input
-								bind:value={valueText}
-								class="relative block w-full appearance-none rounded  border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-								placeholder="Add a new note!"
-							/>
+							<button
+								on:click={() => {
+									addNoteBook();
+								}}
+								class="min-w-full hover:bg-blue-200 text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white"
+							>
+								<p>+</p>
+							</button>
 						</div>
-
-						<button
-					on:click={() => {
-						addNoteBook();
-					}}
-					class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-				>
-					+
-				</button>
-
-						<p class="font-normal text-gray-700 dark:text-gray-400 pointer-events-auto">
-							Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse
-							chronological order.
-						</p>
+						<div />
 					</div>
-					<div>
-				
-					</div>
+
+					{#each $arrS as name}
+						<div
+							class="mx-auto block min-w-full  border border-slate-700 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+		>
+							<NoteBook id={name[0]} content={name[1]} pointer="{pointer}}" />
+						</div>
+					{/each}
 				</div>
+			{/if}
 
-				{#each $arrS.reverse() as name}
+			{#if $storage == 'notes'}
+				<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
 					<button
+						class=" absolute top-5 right-5 z-0 {w} "
 						on:click={() => {
-							$state = name[0];
+							$state = '0';
 
-							$storage = 'notes';
+							$storage = 'notebook';
 							$: if ($storage) {
 								window.sessionStorage.setItem('store', $storage);
 							}
 							ses = $storage;
-
 							$: if ($state) {
 								window.sessionStorage.setItem('id', $state);
 							}
 							id = $state;
-						}}
+						}}><p class="border-2 px-2 rounded-md py-2">Go back</p></button
 					>
-						<NoteBook id={name[0]} content={name[1]} />
-					</button>
-				{/each}
-			</div>
-		{/if}
-
-		{#if ses == 'notes'}
-			<div class=" grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-1 ">
-				<button
-					on:click={() => {
-						$state = '0';
-
-						$storage = 'notebook';
-						$: if ($storage) {
-							window.sessionStorage.setItem('store', $storage);
-						}
-						ses = $storage;
-						$: if ($state) {
-							window.sessionStorage.setItem('id', $state);
-						}
-						id = $state;
-					}}>go back</button
-				>
-				{#key $write}
-					<AllNotes token={data.token} ids={id} />
-				{/key}
-			</div>
-		{/if}
+					
+						<AllNotes token={data.token} ids={$state} />
+					
+				</div>
+			{/if}
+		</div>
 	</div>
-</div>
 {:else}
-<div>wating</div>
+	<div>wating</div>
 {/if}
+
 <style>
+	:global(body){
+		background-color: #ECF2FF;
+	}
 </style>

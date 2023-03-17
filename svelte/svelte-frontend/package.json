@@ -15,6 +15,7 @@
 		"@popperjs/core": "^2.11.6",
 		"@sveltejs/adapter-auto": "^1.0.0",
 		"@sveltejs/kit": "^1.0.0",
+		"@zerodevx/svelte-toast": "^0.9.2",
 		"autoprefixer": "^10.4.13",
 		"classnames": "^2.3.2",
 		"flowbite": "^1.6.3",
@@ -26,6 +27,7 @@
 		"svelte": "^3.54.0",
 		"svelte-check": "^2.9.2",
 		"tailwindcss": "^3.2.4",
+		"tailwindcss-touch": "^1.0.1",
 		"tslib": "^2.4.1",
 		"typescript": "^4.9.3",
 		"vite": "^4.0.0"

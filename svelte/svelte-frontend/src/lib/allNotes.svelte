@@ -1,17 +1,22 @@
 <script lang="ts">
-	import { storage, write, currentNote } from './notes';
+	import { toast } from '@zerodevx/svelte-toast';
+	import { storage, write, currentNote, state } from './notes';
 	import { writable } from 'svelte/store';
 	import { redirect } from '@sveltejs/kit';
 	export let ids: string;
 	export let token: string;
 	let notes;
 
+	state.subscribe((value)=>{
+		ids = value
+	});
 
 	write.subscribe((value) => {
 		notes = value;
 	});
 
-	let valueText: string = 'New note!';
+	let valueText: string = '';
+	let valueText2: string = '';
 	let arr = writable(['0']);
 	let arrayNote: string[] = [];
 
@@ -55,18 +60,38 @@
 		console.log(save['Status'] + save['Message'] + 'mmmmmmm');
 	};
 	let click = false;
-	let state = 'pointer-events-none blur-md';
+	let state2 = 'pointer-events-none blur-md';
 	let zindex = '0';
 	function stateChanged() {
 		if (click == false) {
 			click = true;
-			state = '';
+			state2 = '';
 			zindex = '40';
 		} else {
 			click = false;
-			state = 'pointer-events-none blur-md';
+			state2 = 'pointer-events-none blur-md';
 			zindex = '0';
 		}
+	}
+	$: changing = async () => {
+		const responseNote = await fetch('http://localhost:81/notes/all', {
+			method: 'GET',
+			headers: {
+				Authorization: 'Bearer ' + token,
+				'Content-Type': 'application/json'
+			}
+		});
+		notes = await responseNote.json();
+
+		arrayNote = [];
+
+		for (const note in notes['Data']) {
+			if (notes['Data'][note]['NotebookID'] == ids) {
+				arrayNote.push(notes['Data'][note]);
+			}
+		}
+		$arr = arrayNote;
+		$write = notes;
 	}
 
 	$: deleteNote = async (noteId: string) => {
@@ -102,8 +127,25 @@
 		$arr = arrayNote;
 		$write = notes;
 	};
+
+	import { tweened } from 'svelte/motion';
+  let original = 10; // TYPE NUMBER OF SECONDS HERE
+	let timer = tweened(original)
+
+  // ------ dont need to modify code below
+
+  setInterval(() => {
+    if ($timer > 0) $timer--;
+  }, 1000);
+
+  $: minutes = Math.floor($timer / 60);
+  $: minname = minutes > 1 ? "mins" : "min";
+  $: seconds = Math.floor($timer - minutes * 60)
 </script>
 
+{#if $timer < 1}
+	{changing()}
+{/if}
 <div class="p-2 justify-center mt-5 group grid grid-cols-4">
 	<div
 		class="col-span-3  mx-auto  max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
@@ -112,7 +154,7 @@
 			<input
 				bind:value={valueText}
 				class="relative block w-full appearance-none rounded  border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-				placeholder="Add a new note!"
+				placeholder={valueText2}
 			/>
 		</div>
 	</div>
@@ -134,6 +176,13 @@
 			on:click={() => {
 				addNote();
 				stateChanged();
+				toast.push('New note created!', {
+					theme: {
+						'--toastColor': 'mintcream',
+						'--toastBackground': 'rgba(72,187,120,0.9)',
+						'--toastBarBackground': '#2F855A'
+					}
+				});
 			}}
 			on:keydown={() => {
 				addNote();
@@ -151,6 +200,8 @@
 						$currentNote = [title['ID'], token];
 					}}
 					href="notebook-{ids}/note/{title['ID']}"
+					target="_blank"
+					rel="noreferrer"
 					class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 				>
 					<!-- TODO: REMOVE NOTE FUNCTION-->
@@ -159,7 +210,7 @@
 						{title['Title']}
 					</h5>
 					<p class="font-normal text-gray-700 dark:text-gray-400">
-						{title['Content'].slice(0,25)}...
+						{title['Content'].slice(0, 25)}...
 					</p>
 				</a>
 			</div>
