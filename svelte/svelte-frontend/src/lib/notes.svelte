@@ -1,10 +1,11 @@
 <script lang="ts">
-	import Del from '../routes/user/[slug]/+page.svelte'
+	import Del from '../routes/user/[slug]/+page.svelte';
 	export let content: string;
 	import { storage, write, state } from './notes';
 	export let id;
 	export let pointer;
 	let notes;
+	import { fade,fly } from "svelte/transition"
 
 	write.subscribe((value) => {
 		notes = value;
@@ -30,26 +31,33 @@
 	}
 </script>
 
-<div
+<div 
+on:pointerenter={() => {
+	hovering();
+	
+	console.log('asssss2');
+}}
 
-	class="stack group mx-auto relative min-w-full h-full z-0 {pointer} max-w-sm py-6  border  rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 "
->
-	<button
-		on:animationend={() => {
-			hovering();
-		}}
-		on:click={() => {
-			
-			hover = 'aaaaaa';
-			console.log('asssss2');
-		}}
-		class="cursor-pointer absolute z-10 flex top-0 h-full duration-150 pointer-events-none hover:pointer-events-auto  m-auto right-0 bg-red-400  {hover} lg:w-0 rounded-md text-white group-hover:h-[100%] group-hover:w-[33%] "
+	class=" text-ellipsis  group mx-auto relative min-w-full h-full {pointer} max-w-sm py-6  border  rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 "
+>{#if hover=="w-[33%]"}
+	<button transition:fly="{{ x: 10, duration: 200 }}"	
+
+
+
+	
+		class="cursor-pointer absolute z-100 flex top-0 h-full transition-width transition-slowest ease duration-150  m-auto right-0 bg-red-400  {hover} rounded-md text-white "
 	>
 		<div class="m-auto">
-			<button class=" group-hover:flex ">{del}</button>
+			
+			<button  class=" group-hover:flex text-[#ECF2FF] ">Delete</button>
+			
 		</div>
+		
 	</button>
+	{/if}
 	<button
+		class="min-w-full inline-block text-ellipsis"
+		
 		on:click={() => {
 			$state = id;
 
@@ -69,9 +77,13 @@
 			</div>
 		{/if}
 
-		<h5 class="mx-auto text-2xl font-bold tracking-tight text-gray-900 {pointer} dark:text-white">
+		<p class="w-fit flex-none mx-auto text-2xl  overflow-hidden text-clip font-bold tracking-tight text-gray-900 {pointer} dark:text-white">
+			{#if content.length<40}
 			{content}
-		</h5>
-		<p class="mx-auto font-normal text-gray-700 dark:text-gray-400 {pointer}">asdfasdf</p>
+			{:else}
+			{content.slice(0,39)}
+			{/if}
+		</p>
+		<p class="mx-auto font-normal max-h-full max-w-sm text-ellipsis text-gray-700 dark:text-gray-400 {pointer}">asdfasdf</p>
 	</button>
 </div>

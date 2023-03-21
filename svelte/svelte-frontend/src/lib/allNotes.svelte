@@ -7,8 +7,8 @@
 	export let token: string;
 	let notes;
 
-	state.subscribe((value)=>{
-		ids = value
+	state.subscribe((value) => {
+		ids = value;
 	});
 
 	write.subscribe((value) => {
@@ -73,7 +73,7 @@
 			zindex = '0';
 		}
 	}
-	$: changing = async () => {
+	let changing = async () => {
 		const responseNote = await fetch('http://localhost:81/notes/all', {
 			method: 'GET',
 			headers: {
@@ -92,7 +92,7 @@
 		}
 		$arr = arrayNote;
 		$write = notes;
-	}
+	};
 
 	$: deleteNote = async (noteId: string) => {
 		const formData = new FormData();
@@ -129,22 +129,24 @@
 	};
 
 	import { tweened } from 'svelte/motion';
-  let original = 10; // TYPE NUMBER OF SECONDS HERE
-	let timer = tweened(original)
+	let original = 10; // TYPE NUMBER OF SECONDS HERE
+	let timer = tweened(original);
 
-  // ------ dont need to modify code below
+	// ------ dont need to modify code below
 
-  setInterval(() => {
-    if ($timer > 0) $timer--;
-  }, 1000);
+	setInterval(() => {
+		if ($timer > 0) $timer--;
+	}, 1000);
 
-  $: minutes = Math.floor($timer / 60);
-  $: minname = minutes > 1 ? "mins" : "min";
-  $: seconds = Math.floor($timer - minutes * 60)
+	$: minutes = Math.floor($timer / 60);
+	$: minname = minutes > 1 ? 'mins' : 'min';
+	$: seconds = Math.floor($timer - minutes * 60);
 </script>
 
 {#if $timer < 1}
+<div class="hidden">
 	{changing()}
+	</div>
 {/if}
 <div class="p-2 justify-center mt-5 group grid grid-cols-4">
 	<div

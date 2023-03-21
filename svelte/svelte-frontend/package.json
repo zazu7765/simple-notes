@@ -23,6 +23,7 @@
 		"postcss": "^8.4.21",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
+		"rollup-plugin-copy": "^3.4.0",
 		"sass": "^1.57.1",
 		"svelte": "^3.54.0",
 		"svelte-check": "^2.9.2",
@@ -39,6 +40,7 @@
 		"@milkdown/preset-commonmark": "^6.5.4",
 		"@milkdown/prose": "^6.5.4",
 		"@milkdown/theme-nord": "^6.5.4",
+		"@tinymce/tinymce-svelte": "^1.0.1",
 		"@tiptap/core": "^2.0.0-beta.209",
 		"@tiptap/starter-kit": "^2.0.0-beta.209",
 		"bytemd": "^1.20.2",
@@ -51,6 +53,7 @@
 		"svelte-lexical": "^0.1.8",
 		"svelte-quill": "^1.2.0",
 		"svelte-tiptap": "^0.7.0",
-		"tailwind-editor": "^0.2.2"
+		"tailwind-editor": "^0.2.2",
+		"tinymce": "^6.4.0"
 	}
 }

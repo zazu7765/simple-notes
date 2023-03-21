@@ -6,7 +6,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import NoteBook from '../../../lib/notes.svelte';
 	import AllNotes from '../../../lib/allNotes.svelte';
-
+	import { fade } from 'svelte/transition';
 	import { writable, type Writable } from 'svelte/store';
 
 	let options = { placeholder: 'Write something from outside...' };
@@ -26,10 +26,12 @@
 		window.sessionStorage.setItem('store', $storage);
 		window.sessionStorage.setItem('id', $state);
 	}
+	let loaded = false;
 	onMount(async () => {
 		ses = window.sessionStorage.getItem('store');
 		id = window.sessionStorage.getItem('id');
 		savestore = true;
+		loaded = true;
 	});
 
 	write.subscribe((value) => {
@@ -134,6 +136,7 @@
 {:else}
  
 {/if} -->
+{#if loaded==true}
 <button
 	on:click={() => {
 		openNav();
@@ -275,8 +278,8 @@
 					</div>
 
 					{#each $arrS as name}
-						<div
-							class="mx-auto block min-w-full  border border-slate-700 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+						<div 
+							class=" mx-auto text-ellipsis min-h-full block w-[100%]  border border-slate-700 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 		>
 							<NoteBook id={name[0]} content={name[1]} pointer="{pointer}}" />
 						</div>
@@ -311,6 +314,23 @@
 	</div>
 {:else}
 	<div>wating</div>
+{/if}
+{:else}
+<div class="          grid
+content-center 
+mx-auto
+max-w-2xl
+rounded-lg
+mt-16 items-center justify-center">
+	<div
+	  class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+	  role="status">
+	  <span
+		class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+		>Loading...</span
+	  >
+	</div>
+  </div>
 {/if}
 
 <style>

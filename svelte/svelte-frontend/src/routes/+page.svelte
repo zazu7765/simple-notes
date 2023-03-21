@@ -2,10 +2,11 @@
 	import Footer from "$lib/Footer.svelte"
 	import { afterUpdate } from 'svelte';
 	import { onMount } from 'svelte';
+	let loading = false;
 	  onMount(() => {
 		window.sessionStorage.setItem('store', $storage);
 	window.sessionStorage.setItem('id', $state);
-
+		loading = true;
 	  });
 
 	//    });
@@ -22,7 +23,7 @@
 
 	// 	import { onMount } from "svelte";
 </script>
-
+{#if loading==true}
 {#key login}
 	<NavBar {login} />
 {/key}
@@ -51,7 +52,18 @@
 		</footer>
 		<div class="sticky top-[95vh]"><Footer></Footer></div>
 </div>
-
+{:else}
+<div class=" absolute min-h-screen top-10 py-10 items-center justify-center">
+	<div
+	  class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+	  role="status">
+	  <span 
+		class="!absolute py-10 !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+		>Loading...</span
+	  >
+	</div>
+  </div>
+{/if}
 
 <style>
 	:global(body){

@@ -12,7 +12,11 @@ module.exports = {
   },
   
   theme: {
-    extend: { backgroundColor: ['active'],
+    extend: {
+      transitionProperty: {
+        'width': 'width'
+    },
+      backgroundColor: ['active'],
     
   },
     screens: {
