@@ -78,10 +78,10 @@ on:pointerenter={() => {
 		{/if}
 
 		<p class="w-fit flex-none mx-auto text-2xl  overflow-hidden text-clip font-bold tracking-tight text-gray-900 {pointer} dark:text-white">
-			{#if content.length<40}
+			{#if content.length<35}
 			{content}
 			{:else}
-			{content.slice(0,39)}
+			{content.slice(0,34)}...
 			{/if}
 		</p>
 		<p class="mx-auto font-normal max-h-full max-w-sm text-ellipsis text-gray-700 dark:text-gray-400 {pointer}">asdfasdf</p>
