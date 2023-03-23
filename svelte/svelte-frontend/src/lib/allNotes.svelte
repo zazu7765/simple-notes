@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { toast } from '@zerodevx/svelte-toast';
-	import { storage, write, currentNote, state } from './notes';
+	import { storage, write, currentNote, state, arr } from './notes';
 	import { writable } from 'svelte/store';
 	import { redirect } from '@sveltejs/kit';
+	import { fade, fly } from 'svelte/transition';
+	import SmallNote from './aSmallnote.svelte'
 	export let ids: string;
 	export let token: string;
 	let notes;
@@ -16,8 +18,8 @@
 	});
 
 	let valueText: string = '';
-	let valueText2: string = '';
-	let arr = writable(['0']);
+	let valueText2: string = 'Make a new note!';
+
 	let arrayNote: string[] = [];
 
 	for (const note in notes['Data']) {
@@ -73,7 +75,7 @@
 			zindex = '0';
 		}
 	}
-	let changing = async () => {
+	$: changing = async () => {
 		const responseNote = await fetch('http://localhost:81/notes/all', {
 			method: 'GET',
 			headers: {
@@ -94,7 +96,7 @@
 		$write = notes;
 	};
 
-	$: deleteNote = async (noteId: string) => {
+	export async function dele(noteId: string){
 		const formData = new FormData();
 		formData.append('id', noteId);
 		const deleteNote = await fetch('http://localhost:81/notes/', {
@@ -129,7 +131,7 @@
 	};
 
 	import { tweened } from 'svelte/motion';
-	let original = 10; // TYPE NUMBER OF SECONDS HERE
+	let original = 60; // TYPE NUMBER OF SECONDS HERE
 	let timer = tweened(original);
 
 	// ------ dont need to modify code below
@@ -141,15 +143,27 @@
 	$: minutes = Math.floor($timer / 60);
 	$: minname = minutes > 1 ? 'mins' : 'min';
 	$: seconds = Math.floor($timer - minutes * 60);
+	let hover = '';
+	let del = '';
+	function hovering() {
+		if (hover == '') {
+			hover = 'w-[33%]';
+			del = 'Delete';
+		} else {
+			hover = '';
+			del = '';
+		}
+	}
+	export {arr};
 </script>
 
 {#if $timer < 1}
 <div class="hidden">
 	{changing()}
-	</div>
+</div>
 {/if}
-<div class="p-2 justify-center mt-5 group grid grid-cols-4">
-	<div
+<div class=" mx-auto grid min-w-full lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2 min-h-full">
+	<!-- <div
 		class="col-span-3  mx-auto  max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 	>
 		<div class="">
@@ -159,7 +173,7 @@
 				placeholder={valueText2}
 			/>
 		</div>
-	</div>
+	</div> -->
 	<!-- <div>
 		<button
 			on:click={() => {
@@ -172,7 +186,7 @@
 			</div></button
 		>
 		</div> -->
-	<div>
+	<!-- <div>
 		<button
 			class="place-self-start mt-7 z-10 bg-blue-500  px-6 py-3 text-white group-hover:inline-flex  max-w-sm p-6 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 			on:click={() => {
@@ -192,47 +206,96 @@
 			}}>+</button
 		>
 	</div>
-</div>
-{#key $arr}
-	{#each $arr.reverse() as title}
-		<div class="p-2 mt-5 groupg grid grid-cols-4">
-			<div class="col-span-3">
-				<a
-					on:click={() => {
-						$currentNote = [title['ID'], token];
-					}}
-					href="notebook-{ids}/note/{title['ID']}"
-					target="_blank"
-					rel="noreferrer"
-					class=" mx-auto block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
-				>
-					<!-- TODO: REMOVE NOTE FUNCTION-->
-
-					<h5 class="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-						{title['Title']}
-					</h5>
-					<p class="font-normal text-gray-700 dark:text-gray-400">
-						{title['Content'].slice(0, 25)}...
-					</p>
-				</a>
+</div> -->
+	<div class=" ">
+		<div
+			class=" mx-auto block max-w-sm min-w-full  border  border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+		>
+			<div>
+				<input
+					bind:value={valueText}
+					class="relative block w-full appearance-none rounded  border border-gray-300 py-6 px-1 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+					placeholder={valueText2}
+				/>
 			</div>
 
-			<div
+			<button
 				on:click={() => {
-					deleteNote(title['ID']);
+					addNote();
+					stateChanged();
+					toast.push('New note created!', {
+						theme: {
+							'--toastColor': 'mintcream',
+							'--toastBackground': 'rgba(72,187,120,0.9)',
+							'--toastBarBackground': '#2F855A'
+						}
+					});
 				}}
-				on:keyup={() => {
-					deleteNote(title['ID']);
-				}}
-				class="place-self-start float-right top-0 right-5  mt-7 z-10 bg-red-500 mx-2 px-6 py-3 text-white group-hover:inline-flex  max-w-sm p-6 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+				class="min-w-full hover:bg-blue-200 text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white"
 			>
-				<button
-					on:click={() => {
-						deleteNote(title['ID']);
-					}}
-					class="justify-center ">X</button
-				>
-			</div>
+				<p>+</p>
+			</button>
 		</div>
+		<div />
+	</div>
+
+	{#each $arr.reverse() as title}
+		<!-- <div
+			on:pointerenter={() => {
+				hover = 'w-[33%]';
+				del = 'Delete';
+			}}
+			on:pointerleave={() => {
+				hover = '';
+				del = '';
+			}}
+			class=" text-ellipsis mx-auto relative min-w-full h-full max-w-sm py-6  border  rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+		>
+	
+			{#if hover == 'w-[33%]'}
+				<button
+					transition:fly={{ x: 12, duration: 200 }}
+					class="cursor-pointer absolute z-100 flex top-0 h-full transition-width transition-slowest ease duration-150  m-auto right-0 bg-red-400  {hover} rounded-md text-white "
+				>
+					<div class="m-auto">
+						<button
+							on:click={() => {
+								toast.push('note Deleted!', {
+									theme: {
+										'--toastColor': 'mintcream',
+										'--toastBackground': 'rgba(72,187,120,0.9)',
+										'--toastBarBackground': '#2F855A'
+									}
+								});
+								deleteNote(title['ID']);
+							}}
+							class=" group-hover:flex text-[#ECF2FF] ">Delete</button
+						>
+					</div>
+				</button>
+			{/if}
+
+
+			<a
+				on:click={() => {
+					$currentNote = [title['ID'], token];
+				}}
+				href="notebook-{ids}/note/{title['ID']}"
+				target="_blank"
+				rel="noreferrer"
+			>
+				<h5
+					class="w-fit m-auto flex-none mx-auto text-2xl  overflow-hidden text-clip font-bold tracking-tight text-gray-900 dark:text-white"
+				>
+					{title['Title']}
+				</h5>
+				<p
+					class="m-auto font-normal w-fit max-h-full max-w-sm text-ellipsis text-gray-700 dark:text-gray-400"
+				>
+					{title['Content'].slice(0, 25)}...
+				</p>
+			</a>
+		</div> -->
+		<SmallNote title={title} token={token}></SmallNote>
 	{/each}
-{/key}
+</div>

@@ -43,8 +43,14 @@
 	>
 		<h1 class="lg:text-2xl sm:text-xl py-2 my-4 block px-5 text-center rounded-md text-slate-1000 font-medium"><b>Take notes with Simple Notes</b><br>
 			<p class="text-base mt-3">Organize, manage and always be ahead of your schdule.</p>
+			
 		</h1>
 		
+							
+		<button on:click={()=>{
+			window.location.assign('/sign');
+		}}  class="md:p-2 py-1 my-2 block  px-1 text-base  rounded-md  text-slate-1000"><p class=" w-[50%] m-auto border-2 rounded-lg border-black hover:bg-slate-300">Start taking notes now!</p></button>
+
 	</div>
 	
 	<footer class="bottom-0" >

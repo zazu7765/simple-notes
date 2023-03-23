@@ -6,8 +6,9 @@
 	import { currentNote, storage } from '$lib/notes';
 	import { redirect } from '@sveltejs/kit';
 	import Editor from '@tinymce/tinymce-svelte';
+	import { HtmlTag } from 'svelte/internal';
 
-let value2 = 'some content';
+let value2 = 'Loading';
 
 	let editor;
 	export let toolbarOptions = [
@@ -41,7 +42,7 @@ let value2 = 'some content';
 		console.log($page.params.note);
 		console.log(dataNote['Data']);
 		
-		alert((dataNote['Data']['Content']));
+		// alert((dataNote['Data']['Content']));
 		const { default: Quill } = await import('quill');
 
 		quillE = new Quill(editor, {
@@ -100,12 +101,21 @@ let value2 = 'some content';
 		// Set the timeout to 5 seconds (5000 milliseconds)
 	}
 	let content2 = { html: '', text: '' };
+
+
 </script>
 
 <div class="p-4 ">
 	<div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
-		<div class="editor-wrapper editor h-screen">
-			<div
+
+			<!-- <h1>{@html value2}</h1> -->
+			<Editor bind:value={value2} 				on:keydown={() => {
+				clearTimeout(timer);
+				startTimer();
+			}}
+			  apiKey="ro357dg4ght7s6z2r3m0f2uslrfl9i9dfogk5mvn3dj2xhr5"
+			/>
+			<!-- <div
 				bind:this={editor}
 				on:keydown={() => {
 					clearTimeout(timer);
@@ -113,18 +123,12 @@ let value2 = 'some content';
 				}}
 				bind:textContent={content}
 				contenteditable
-			/>
-		</div>
+			/>-->
+
 	</div>
 </div>
 
 
-<main>
-	<h1>{value2}</h1>
-	<Editor bind:value={value2}
-	  apiKey="ro357dg4ght7s6z2r3m0f2uslrfl9i9dfogk5mvn3dj2xhr5"
-	/>
-  </main>
 <!-- <div
 	class="editor"
 	use:quill={options}

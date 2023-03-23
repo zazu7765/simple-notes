@@ -12,11 +12,11 @@
 </div>
 
 <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-	<div class="w-full max-w-md space-y-8 p-4 bg-[#E9A178] rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-		<div class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-100">
-			Simple notes 🗒️
-			<h2 class="mt-6 text-center text-2xl font-bold tracking-tight text-gray-100">
+	<div class="w-full max-w-md border-2 border-slate-700 space-y-8 p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+		<div class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-700">
 				Sign up for a new account!
+			<h2 class="mt-6 text-center text-2xl font-bold tracking-tight text-gray-100">
+			
 			</h2>
 			<!-- <p class="mt-2 text-center text-sm text-gray-600">
           Or
@@ -84,7 +84,7 @@
 			<div>
 				<button
 					type="submit"
-					class="group relative flex w-full justify-center rounded-md border border-transparent bg-gray-500 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+					class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-500 py-2 px-4 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
 				>
 					<span class="absolute inset-y-0 left-0 flex items-center pl-3">
 						<!-- Heroicon name: mini/lock-closed -->

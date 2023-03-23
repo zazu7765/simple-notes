@@ -82,7 +82,7 @@
 					>
 						{#if !login}
 							<li>
-								<a class="md:px-4 py-1 my-1 mr-3 block hover:border-b-2 border-2 px-4 border-slate-500 rounded-md  text-slate-800" href="/login"><b>Login</b></a>
+								<a class="md:px-4 py-1 my-1 mr-3 block  border-2 px-4 border-slate-500 rounded-md  text-slate-800" href="/login"><b>Login</b></a>
 							</li>
 							<!-- <li> -->
 								<!-- <a  class="md:p-4 py-2 my-2 block hover:border-b-2  px-2 bg-[#E9A178]  rounded-md  text-slate-100" href="/sign"
@@ -91,13 +91,13 @@
 							<!-- </li> -->
 						{:else}
 							<li>
-								<a  class="md:p-4 py-2 my-4 block hover:border-b-2 mr-3  px-2 bg-[#E9A178] rounded-md  text-slate-100" href="/user/notebooks"
+								<a  class="md:p-4 py-2 my-4 block mr-3  border-2  px-2 border-slate-500 rounded-md  text-slate-800" href="/user/notebooks"
 									><b>Open Dashboard</b></a
 								>
               </li>
               <li>
 			
-								<a class= "md:p-4 py-2 my-4 block  px-2  bg-[#E9A178] rounded-md  text-slate-100" href="/logout"
+								<a class= "md:p-4 py-2 my-4 block  px-2   border-2 border-slate-500  rounded-md  text-slate-800" href="/logout"
 									><b>Logout</b></a
 								>
 
