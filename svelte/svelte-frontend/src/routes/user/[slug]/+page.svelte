@@ -1,7 +1,9 @@
 <script module lang="ts">
+	var url = import.meta.env.VITE_PUBLIC_URL
+	import { toast } from '@zerodevx/svelte-toast';
 	import { redirect } from '@sveltejs/kit';
 	import Sidebar from '../../../lib/Sidebar.svelte';
-	import { write, storage, state, arrS } from '../../../lib/notes';
+	import { write, storage, state, arrS} from '../../../lib/notes';
 	import { browser } from '$app/environment';
 	import { onDestroy, onMount } from 'svelte';
 	import NoteBook from '../../../lib/notes.svelte';
@@ -74,16 +76,16 @@
 
 	$: addNoteBook = async () => {
 		const formData = new FormData();
-		formData.append('id', arr[0]['UserID']);
+		// formData.append('id', $id);
 		formData.append('Title', valueText);
-		const response = await fetch('http://localhost:81/notebooks', {
+		const response = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notebooks', {
 			method: 'POST',
 			body: formData,
 			headers: {
 				Authorization: 'Bearer ' + data.token
 			}
 		});
-		const responseAll = await fetch('http://localhost:81/notebooks/all', {
+		const responseAll = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notebooks/all', {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + data.token,
@@ -92,16 +94,17 @@
 		});
 		let content2 = await responseAll.json();
 		let lengthA = content2['Data'].length - 1;
-		console.log(content2['Data'][lengthA]['Title'] + 'thelas');
+
 
 		arr.unshift([content2['Data'][lengthA]['ID'], content2['Data'][lengthA]['Title']]);
 
 		arrS.set(arr)
+		$arrS = arr
 	};
 	export const deleteNote = async (noteId: string) => {
 		const formData = new FormData();
 		formData.append('id', noteId);
-		const deleteNote = await fetch('http://localhost:81/notebooks/', {
+		const deleteNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notebooks/', {
 			method: 'DELETE',
 			body: formData,
 			headers: {
@@ -112,7 +115,7 @@
 		if (data1['Status'] == 'error') {
 			throw redirect(302, '/logout');
 		}
-		const responseNote = await fetch('http://localhost:81/notebooks/all', {
+		const responseNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notebooks/all', {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + data.token,
@@ -177,11 +180,7 @@
 					closeNav();
 				}}
 			>
-				<!-- <img
-					src="https://flowbite.com/docs/images/logo.svg"
-					class="h-6 mr-3 sm:h-7"
-					alt="Flowbite Logo"
-				/> -->
+
 				<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
 					>Simple Notes
 				</span>
@@ -247,7 +246,7 @@
 				<div class=" mx-auto grid min-w-full lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-2">
 					<div class=" ">
 						<div
-							href="notebook-0"
+
 							class=" mx-auto block max-w-sm min-w-full  border  border-gray-200 rounded-lg shadow  dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
 						>
 							<div class={pointer}>
@@ -261,6 +260,13 @@
 							<button
 								on:click={() => {
 									addNoteBook();
+									toast.push('Notebook created!', {
+                        theme: {
+                            '--toastColor': 'mintcream',
+                            '--toastBackground': 'rgba(72,187,120,0.9)',
+                            '--toastBarBackground': '#2F855A'
+                        }
+                    });
 								}}
 								class="min-w-full hover:bg-blue-200 text-2xl text-center font-bold tracking-tight text-gray-900 dark:text-white"
 							>

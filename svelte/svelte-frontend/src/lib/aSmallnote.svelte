@@ -32,7 +32,7 @@
     async function dele(noteId: string){
 		const formData = new FormData();
 		formData.append('id', noteId);
-		const deleteNote = await fetch('http://localhost:81/notes/', {
+		const deleteNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes/', {
 			method: 'DELETE',
 			body: formData,
 			headers: {
@@ -43,7 +43,7 @@
 		if (data['Status'] == 'error') {
 			throw redirect(302, '/logout');
 		}
-		const responseNote = await fetch('http://localhost:81/notes/all', {
+		const responseNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes/all', {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + token,
@@ -83,11 +83,10 @@ class=" text-ellipsis mx-auto relative min-w-full h-full max-w-sm py-6  border  
         <div class="m-auto">
             <button
                 on:click={() => {
-                    toast.push('note Deleted!', {
+                    toast.push('Note deleted!', {
                         theme: {
                             '--toastColor': 'mintcream',
-                            '--toastBackground': 'rgba(72,187,120,0.9)',
-                            '--toastBarBackground': '#2F855A'
+                            '--toastBarBackground': '#C70039'
                         }
                     });
                     // dele(title['ID']);
@@ -117,7 +116,7 @@ class=" text-ellipsis mx-auto relative min-w-full h-full max-w-sm py-6  border  
         class="m-auto font-normal w-fit max-h-full max-w-sm text-ellipsis text-gray-700 dark:text-gray-400"
     >
 
-        {@html title['Content'].slice(0, 25)}...
+        {@html title['Content'].slice(0, 25)}
     </p>
 </a>
 </div>

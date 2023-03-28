@@ -5,14 +5,14 @@ export async function load({ locals, params }) {
 
 	let login = false;
 	console.log('sss' + locals.user);
-	const response = await fetch('http://localhost:81/notebooks/all', {
+	const response = await fetch(import.meta.env.VITE_PUBLIC_URL+'/notebooks/all', {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + locals.token,
 			'Content-Type': 'application/json'
 		}
 	});
-	const responseNote = await fetch('http://localhost:81/notes/all', {
+	const responseNote = await fetch(import.meta.env.VITE_PUBLIC_URL+'/notes/all', {
 		method: 'GET',
 		headers: {
 			Authorization: 'Bearer ' + locals.token,
@@ -27,7 +27,7 @@ export async function load({ locals, params }) {
 	}
 	const formData = new FormData();
 	formData.append('id', params.note);
-	const responseNotes = await fetch('http://localhost:81/notes', {
+	const responseNotes = await fetch(import.meta.env.VITE_PUBLIC_URL+'/notes', {
 		method: 'POST',
 		body: formData,
 		headers: {

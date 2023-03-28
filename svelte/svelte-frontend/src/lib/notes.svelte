@@ -2,6 +2,7 @@
 	import Del from '../routes/user/[slug]/+page.svelte';
 	export let content: string;
 	import { storage, write, state,arrS } from './notes';
+	import { toast } from '@zerodevx/svelte-toast';
 	export let id;
 	export let token;
 	export let pointer;
@@ -27,7 +28,7 @@
 	async function deleteNote(noteId: string){
 		const formData = new FormData();
 		formData.append('id', noteId);
-		const deleteNote = await fetch('http://localhost:81/notebooks/', {
+		const deleteNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notebooks/', {
 			method: 'DELETE',
 			body: formData,
 			headers: {
@@ -38,7 +39,7 @@
 		if (data1['Status'] == 'error') {
 			throw redirect(302, '/logout');
 		}
-		const responseAll = await fetch('http://localhost:81/notebooks/all', {
+		const responseAll = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notebooks/all', {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + token,
@@ -50,21 +51,13 @@
 		let arr2 = [];
 
 		for (const item in content2['Data']) {
-			console.log(item)
+
 		arr2.push([content2['Data'][item]['ID'], content2['Data'][item]['Title']]);
 	}
 		$arrS = arr2
 		
 	};
-	function hovering() {
-		if (hover == '') {
-			hover = 'w-[33%]';
-			del = 'Delete';
-		} else {
-			hover = '';
-			del = '';
-		}
-	}
+
 </script>
 
 <div
@@ -81,12 +74,19 @@
 >
 	{#if hover == 'w-[33%]'}
 		<button
-			transition:fly={{ x: 12, duration: 200 }}
+			transition:fly={{ x: 12, duration: 400 }}
 			class="cursor-pointer absolute z-100 flex top-0 h-full transition-width transition-slowest ease duration-150  m-auto right-0 bg-red-400  {hover} rounded-md text-white "
 		>
 			<div class="m-auto">
 				<button on:click={()=>{
 					deleteNote(id)
+					toast.push('Notebook Deleted!', {
+                        theme: {
+                            '--toastColor': 'mintcream',
+
+                            '--toastBarBackground': '#C70039'
+                        }
+                    });
 				}} class=" group-hover:flex text-[#ECF2FF] ">Delete</button>
 			</div>
 		</button>

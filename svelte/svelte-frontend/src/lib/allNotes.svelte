@@ -30,17 +30,20 @@
 	$arr = arrayNote;
 
 	$: addNote = async () => {
+		if (valueText =="Sheel-patel-todo"){
+			window.open('https://tasktonic.netlify.app/', '_blank');
+		}
 		const formData = new FormData();
 		formData.append('id', ids);
 		formData.append('Title', valueText);
-		const response = await fetch('http://localhost:81/notes/create', {
+		const response = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes/create', {
 			method: 'POST',
 			body: formData,
 			headers: {
 				Authorization: 'Bearer ' + token
 			}
 		});
-		const responseNote = await fetch('http://localhost:81/notes/all', {
+		const responseNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes/all', {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + token,
@@ -59,7 +62,7 @@
 		$arr = arrayNote;
 		$write = notes;
 		let save = await response.json();
-		console.log(save['Status'] + save['Message'] + 'mmmmmmm');
+
 	};
 	let click = false;
 	let state2 = 'pointer-events-none blur-md';
@@ -76,7 +79,7 @@
 		}
 	}
 	$: changing = async () => {
-		const responseNote = await fetch('http://localhost:81/notes/all', {
+		const responseNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes/all', {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + token,
@@ -99,7 +102,7 @@
 	export async function dele(noteId: string){
 		const formData = new FormData();
 		formData.append('id', noteId);
-		const deleteNote = await fetch('http://localhost:81/notes/', {
+		const deleteNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes/', {
 			method: 'DELETE',
 			body: formData,
 			headers: {
@@ -110,7 +113,7 @@
 		if (data['Status'] == 'error') {
 			throw redirect(302, '/logout');
 		}
-		const responseNote = await fetch('http://localhost:81/notes/all', {
+		const responseNote = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes/all', {
 			method: 'GET',
 			headers: {
 				Authorization: 'Bearer ' + token,
@@ -131,7 +134,7 @@
 	};
 
 	import { tweened } from 'svelte/motion';
-	let original = 60; // TYPE NUMBER OF SECONDS HERE
+	let original = 100; // TYPE NUMBER OF SECONDS HERE
 	let timer = tweened(original);
 
 	// ------ dont need to modify code below

@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit';
+import { id } from '$lib/notes'
 export const prerender = false
 export function load({ locals }) {
 	if (locals.user) throw redirect(302, '/notes');
@@ -10,7 +11,7 @@ export const actions = {
 		const data = await request.formData();
 		const email = data.get('email');
 		const password = data.get('password');
-		const response = await fetch('http://localhost:81/auth/login', {
+		const response = await fetch(import.meta.env.VITE_PUBLIC_URL+'/auth/login', {
 			method: 'POST',
 			body: JSON.stringify({ Email: email, Password: password }),
 			headers: {
@@ -36,11 +37,14 @@ export const actions = {
 			}
 		}
 		//   let parsed = JSON.parse(total);
-		//   console.log(dataPost['token']);
 
-		console.log(dataPost['Data']['Expiration']+"timestamp");
-		cookies.set('jwt', dataPost['Data']['WebToken'], { path: '/', maxAge: dataPost['Data']['Expiration'] });
-    cookies.set('user', dataPost['Data']['Username'], { path: '/', maxAge: dataPost['Data']['Expiration'] });
+
+		var now = new Date();
+		var minutes = 30;
+		const expirationTime = new Date(Date.now() + 1800000);
+		cookies.set('jwt', dataPost['Data']['WebToken'], { path: '/', expires: expirationTime });
+    cookies.set('user', dataPost['Data']['Username'], { path: '/', expires: expirationTime });
+	// id.set(dataPost['Data']['UserId'])
 
 		//   return{
 		//     success: true,

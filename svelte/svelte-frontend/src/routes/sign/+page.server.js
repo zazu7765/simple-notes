@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit';
-
+import {token} from '$lib/notes'
 export function load({ locals }) {
 	if (locals.user) throw redirect(302, '/user/'+locals.user);
 }
@@ -11,7 +11,10 @@ export const actions = {
 		const name = data.get('name');
 		const email = data.get('email');
 		const password = data.get('password');
-		const response = await fetch('http://localhost:81/auth/signup', {
+		console.log(import.meta.env.VITE_PUBLIC_URL)
+		const url = import.meta.env.VITE_PUBLIC_URL
+		const response = await fetch(`${url}/auth/signup`, {
+			
 			method: 'POST',
 			body: JSON.stringify({ Name: name, Email: email, Password: password }),
 			headers: {
@@ -19,38 +22,47 @@ export const actions = {
 				'Content-Type': 'application/json'
 			}
 		});
+
+		console.log("ggg")
 		if (!response) {
+			console.log("gggff")
 			return {
+				
 				success: false
+				
 			};
 		}
 		let dataPost;
 		try {
 			dataPost = await response.json();
 		} catch (error) {
-			
+			console.log("ffff")
 			return {
 				success: false,
 				message: dataPost['Data']
 			};
 		}
 		if (dataPost['Status'] == 'error') {
+			console.log('jjjjj')
 			return {
 				success: false,
 				message: dataPost['Data']
 			}
 		}
 		//   let parsed = JSON.parse(total);
-		//   console.log(dataPost['token']);
-
+		console.log('jjjjj')
+		const expirationTime = new Date(Date.now() + 1800000);
 		cookies.set('jwt', dataPost['Data']['WebToken'], {
+			secure: false,
 			path: '/',
-			maxAge: dataPost['Data']['Expiration']
+			expires: expirationTime
 		});
 		cookies.set('user', dataPost['Data']['Username'], {
+			secure: false,
 			path: '/',
-			maxAge: dataPost['Data']['Expiration']
+			expires: expirationTime
 		});
+		console.log(cookies.get('jwt')+'kkkkkkkkkkk');
 		throw redirect(302, '/user/'+dataPost['Data']['Username']);
 	}
 };

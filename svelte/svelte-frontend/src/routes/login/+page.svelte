@@ -6,8 +6,9 @@
 	let Email = 'email@example.com';
 	let Password = 'password';
 	let total: any;
+
 	async function signIn() {
-		const response = await fetch('http://localhost:81/login', {
+		const response = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/login', {
 			method: 'POST',
 			body: JSON.stringify({ Email: Email, Password: Password }),
 			headers: {
@@ -22,7 +23,7 @@
 	/** @type {import('./$types').ActionData} */
 	export let form;
 	if(form){
-	console.log(form.success+"fasdfdasf");
+
 	}
 	
 

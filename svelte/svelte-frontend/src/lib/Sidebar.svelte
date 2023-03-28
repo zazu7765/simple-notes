@@ -7,17 +7,17 @@
 	write.subscribe((value) => {
 		notes = value;
 	});
-	console.log(notes['Data'][0]['NotebookID'] + 'dafasdfasdfasdfasd');
+
 	export let name: string[];
 	let arrayNote: string[] = [];
 	for (const note in notes['Data']) {
-		console.log(notes['Data'][note]['Title']);
+
 		if (notes['Data'][note]['NotebookID'] == name[0]) {
 			arrayNote.push(notes['Data'][note]);
-			console.log('afjklns;hhjlfdshjkldfhjksaglhjklfdjhkldfshjkldfsa');
+
 		}
 	}
-	console.log('hhjlfdshjkldfhjksaglhjklfdjhkldfshjkldfsaa' + arrayNote);
+
     let menu = 'hidden';
 
 </script>

@@ -12,7 +12,7 @@
 	
 
 	// });
-	console.log(login);
+
 </script>
 
 <div>

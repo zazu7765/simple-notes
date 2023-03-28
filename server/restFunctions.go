@@ -58,6 +58,7 @@ type loginResponse struct {
 	WebToken   string
 	Expiration int64
 	Username   string
+	UserId uint64
 }
 type userResponse struct {
 	Name  string
@@ -179,6 +180,7 @@ func signUpUser(c *fiber.Ctx) error {
 			token,
 			exp,
 			user.Name,
+			uint64(user.ID),
 		},
 	})
 }
@@ -227,7 +229,10 @@ func loginUser(c *fiber.Ctx) error {
 		"Data": loginResponse{
 			token,
 			exp,
-			user.Name},
+			user.Name,
+			uint64(user.ID),
+		},
+			
 	})
 }
 func generateJWT(user User) (string, int64, error) {

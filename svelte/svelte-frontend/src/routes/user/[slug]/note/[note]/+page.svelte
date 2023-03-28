@@ -2,26 +2,16 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	import { quill } from 'svelte-quill';
+
 	import { currentNote, storage } from '$lib/notes';
 	import { redirect } from '@sveltejs/kit';
 	import Editor from '@tinymce/tinymce-svelte';
 	import { HtmlTag } from 'svelte/internal';
+	import { toast } from '@zerodevx/svelte-toast';
 
 let value2 = 'Loading';
 
-	let editor;
-	export let toolbarOptions = [
-		[{ header: 1 }, { header: 2 }, 'blockquote', 'link', 'image', 'video'],
-		['bold', 'italic', 'underline', 'strike'],
-		[{ list: 'ordered' }, { list: 'ordered' }],
-		[{ align: [] }],
-		['clean']
-	];
 
-	let options = { placeholder: 'Write something from outside...' };
-
-	let content;
 	let noteId: string[] = [];
 	currentNote.subscribe((value) => {
 		noteId = value;
@@ -35,28 +25,28 @@ let value2 = 'Loading';
 
 	// export let data: any;
 	export let data: any;
-
+	let load = false
 	let dataNote = data.notes;
-	let quillE: any;
+
 	onMount(async () => {
-		console.log($page.params.note);
-		console.log(dataNote['Data']);
+		
 		
 		// alert((dataNote['Data']['Content']));
-		const { default: Quill } = await import('quill');
 
-		quillE = new Quill(editor, {
-			modules: {
-				toolbar: toolbarOptions
-			},
-			theme: 'snow',
-			placeholder: 'Write your story...'
-		});
+
+	
 
 			// quillE.setContents(dataNote['Data']['Content']);
 			value2 = dataNote['Data']['Content']
-		
+			load = true
 		// quillE.insertEmbed(dataNote['Data']['Content']);
+		toast.push('Your note is loading...', {
+                        theme: {
+                            '--toastColor': 'mintcream',
+                            '--toastBackground': '#99C1F0',
+                            '--toastBarBackground': '#006AE8'
+                        }
+                    });
 
 	});
 
@@ -65,7 +55,7 @@ let value2 = 'Loading';
 	//     const formData = new FormData();
 	// 	formData.append('id', dataNote["Data"]["ID"]);
 	// 	formData.append('Content', content);
-	// 	const response = await fetch('http://localhost:81/notes', {
+	// 	const response = await fetch('/notes', {
 	// 		method: 'PUT',
 	// 		body: formData,
 	// 		headers: {
@@ -78,13 +68,13 @@ let value2 = 'Loading';
 	let typingTimer; //timer identifier
 	let doneTypingInterval = 5000;
 	$: doneTyping = async () => {
-		console.log(value2);
+
 		var delta = value2
-		console.log(editor);
+
 		const formData = new FormData();
 		formData.append('id', dataNote['Data']['ID']);
 		formData.append('Content', delta);
-		const response = await fetch('http://localhost:81/notes', {
+		const response = await fetch(import.meta.env.VITE_PUBLIC_URL_FRONTEND+'/notes', {
 			method: 'PUT',
 			body: formData,
 			headers: {
@@ -95,16 +85,23 @@ let value2 = 'Loading';
 	let timer;
 	function startTimer() {
 		timer = setTimeout(function () {
-			console.log('No user input detected.');
+
 			doneTyping();
+			toast.push('Note saved!', {
+                        theme: {
+                            '--toastColor': 'mintcream',
+                            '--toastBackground': 'rgba(72,187,120,0.9)',
+                            '--toastBarBackground': '#2F855A'
+                        }
+                    });
 		}, 5000);
 		// Set the timeout to 5 seconds (5000 milliseconds)
 	}
-	let content2 = { html: '', text: '' };
+
 
 
 </script>
-
+{#if load==true}
 <div class="p-4 ">
 	<div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
 
@@ -127,7 +124,23 @@ let value2 = 'Loading';
 
 	</div>
 </div>
-
+{:else}
+<div class="          grid
+content-center 
+mx-auto
+max-w-2xl
+rounded-lg
+mt-16 items-center justify-center">
+	<div
+	  class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+	  role="status">
+	  <span
+		class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+		>Loading...</span
+	  >
+	</div>
+  </div>
+{/if}
 
 <!-- <div
 	class="editor"

@@ -3,7 +3,7 @@
 	let login = false;
 	export let form;
 	if(form){
-	console.log(form.success+" logged in");
+
 	}
 </script>
 
