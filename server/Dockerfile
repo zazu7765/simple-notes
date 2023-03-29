@@ -1,5 +1,5 @@
 # build SERVER
-FROM golang:1.19-alpine
+FROM golang:1.20.2-alpine3.16
 WORKDIR /server
 COPY go.* ./
 RUN go mod download

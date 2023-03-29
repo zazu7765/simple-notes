@@ -1,6 +1,6 @@
 module simple-notes/server
 
-go 1.19
+go 1.20
 
 require (
 	gorm.io/driver/postgres v1.4.6
